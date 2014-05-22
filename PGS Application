@@ -1,182 +1,81 @@
-library(geepack)
-library(lme4)
-library(mvtnorm)
-library(cvTools)
+### Initiate a folder for storing the results
+setwd("YourPath/")
 
-##set up the data
-exposure = read.csv("path/exposure_data_final.csv",header=T)
-mirna = read.csv("path/mirna.csv",header=T)
-mirna["idu"]<-NA
-mirna$idu<-mirna$wd+10*mirna$id
-exposure$idu<-NA
-as.numeric(exposure$idu)
-exposure$idu<-exposure$WD+10*exposure$ID
-mirna[,167]<-mirna[,168]<-NULL
+### Load Sample data
+DATA<-read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
 
-#######imputation by repeating the measurement##############
-mirna.imp<-mirna[37:48,]
-mirna.imp$idu<-mirna.imp$idu-1
-mirna<-rbind(mirna,mirna.imp)
-mirna<-mirna[order(mirna[,167]),]
-all <- merge(exposure,mirna,by="idu")
-mirnas<-as.matrix(all[,273:438])
-mirnames<-colnames(mirnas)
-conf.names<-c("pm25","SEX","age","bmi","smoker","HEAT_CENTER","CIGS_WEAR","WAY_TIME","WORK_HR_DAY","DEWP","Atemp")
-confounders<-all[,conf.names]
-confounders[166,]$pm25<-confounders[165,]$pm25
-confounders_original<-confounders
+### Load PGS functions
+script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
 
-pdf("hist_confounders.pdf")
-par(mfrow=c(3,1))
-for (i in 1:length(conf.names)){
-  xname<-conf.names[i]
-  hist(confounders_original[,i],xlab=xname)
+y.vect<-DATA$FEV1      ###Extract dependent variable
+id.vect<-DATA$SID      ###Extract subjuect id variable to indicate repeated measures
+M<-as.matrix(DATA[,4:169])        ###Extract microRNA data matrix (row=samples, column=miRNA probes)
+COV<-as.matrix(DATA[,170:179])    ###Extract covariate data matrix
+mirnames=colnames(M)
+conf.names=colnames(COV)
+
+###########---- Site-by-site test/Pre-screening with LMM ----###########
+
+ps_lmm<-matrix(ncol=3,nrow=ncol(M))
+for(i in 1:ncol(M)){
+  g1<-lmer(y.vect~M[,i]+COV+(1|id.vect))      ###########adjusted for the 10 confounders
+  ps_lmm[i,2]<-summary(g1)$coefficients[2,1]  #######point estimate
+  ps_lmm[i,3]<-summary(g1)$coefficients[2,3]  #######t value
 }
-dev.off()
-##################transformation of some of the confounders
-confounders$female<-confounders$SEX-1
-confounders$logpm25<-log(confounders$pm25)
-hist(confounders$logpm25)
-confounders$CIGS<-1-(confounders_original$CIGS_WEAR==0)
-table(confounders$CIGS)
-confounders$logWAY_TIME<-(log(confounders_original$WAY_TIME))
-conf.names<-c("logpm25","female","age","bmi","HEAT_CENTER","CIGS","logWAY_TIME","WORK_HR_DAY","DEWP","Atemp")
-confounders<-confounders[,conf.names]
-confounders$HEAT_CENTER<-confounders$HEAT_CENTER-1###########transform to indicator
-dim(confounders)
-pdf("hist_confounders_transformed.pdf")
-par(mfrow=c(3,1))
-for (i in 1:length(conf.names)){
-  xname<-conf.names[i]
-  hist(confounders[,i],xlab=xname)
-}
-dev.off()
-#############mirnas
-pdf("hist_mirnas.pdf")
-par(mfrow=c(3,1))
-for (i in 1:166){
-  xname<-mirnames[i]
-  hist(mirnas[,i],xlab=xname)
-}
-dev.off()
-
-y.vect<-all$fev1#############outcome
-hist(y.vect)
-
-m=2########repeated measurements
-id.vect<-sort(rep(1:120,m))
-colnames(mirnas)
-M<-cbind(mirnas,confounders)#########covariates matrix
-head(M)
-
-
-
-###########Pre-screening with LMM#########
-M<-as.matrix(M)
-ps_lmm<-matrix(ncol=3,nrow=ncol(mirnas))
-for(i in 1:ncol(mirnas)){
-  g1<-lmer(y.vect~M[,i]+M[,167:176]+(1|id.vect))  ###########adjusted for the 10 confounders
-  ps_lmm[i,2]<-summary(g1)$coefficients[2,1]      #######point estimate
-  ps_lmm[i,3]<-summary(g1)$coefficients[2,3]      #######t value
-}
-ps_lmm[,1]<-seq(from=1,to=ncol(mirnas))
+ps_lmm[,1]<-seq(from=1,to=ncol(M))  
+rownames(ps_lmm)<-colnames(M)
 ps_lmm<-ps_lmm[order(-abs(ps_lmm[,3])), ]         #######order by t values
 colnames(ps_lmm)<-c("ID","estimate","t-value")
 pvalue<-2*(1-pnorm(abs(ps_lmm[,3])))
-ps_lmm<-cbind(ps_lmm,pvalue)
+ps_lmm<-data.frame(cbind(ps_lmm,pvalue))
+
+ps_lmm$BH.FDR=p.adjust(ps_lmm$pvalue,"fdr")     #######calculate Benjamini and Hochberg FDR
+ps_lmm$qvalue=qvalue(ps_lmm$pvalue)$qvalues     #######calculate Benjamini and Hochberg FDR
+
+
 write.csv(ps_lmm,"PS_LMM.csv")
-##############PS with gee#####################
-ps_gee<-matrix(ncol=3,nrow=ncol(mirnas))
-for(i in 1:ncol(mirnas)){
-  g1<-geeglm(y.vect~M[,i]+M[,167:176],id=id.vect)
+
+###########---- Site-by-site test/Pre-screening with GEE ----###########
+
+ps_gee<-matrix(ncol=3,nrow=ncol(M))
+for(i in 1:ncol(M)){
+  g1<-geeglm(y.vect~M[,i]+COV,id=id.vect)
   ps_gee[i,2]<-summary(g1)$coefficients[2,1]
   ps_gee[i,3]<-summary(g1)$coefficients[2,4]
 }
-ps_gee[,1]<-seq(from=1,to=ncol(mirnas),by=1)
-ps_gee<-ps_gee[order(ps_gee[,3]), ]
-colnames(ps_gee)<-c("ID","estimate","p-value")
+ps_gee[,1]<-seq(from=1,to=ncol(M),by=1)
+rownames(ps_gee)<-colnames(M)
+ps_gee<-data.frame(ps_gee[order(ps_gee[,3]), ])    #######order by p values
+colnames(ps_gee)<-c("ID","estimate","pvalue")
+
+ps_gee$BH.FDR=p.adjust(ps_gee$pvalue,"fdr")
+ps_gee$qvalue=qvalue(ps_gee$pvalue)$qvalues
+
 write.csv(ps_gee,"PS_GEE.csv")
 
+
 ############################Penalized GEE with Grid Search (PGS)########################
+###
+n=120   ### Sample Size
+m=2     ### Repeated measurement times
 
-rho=0.3
-sigma2=1
+cvgrps<-cvFolds(n, K = 20,type = "random")  ### Generate a 20-fold cross validation scheme
 
-fold=20
-eps=10^-10
-eps.stop=0
-max.step=50
-str.y<-"ar1"
+PS<-read.csv("PS_LMM.csv")  ###Import LMM prescreening results
 
-PM<-c(seq(1:8)*20-10,166)
-lam.vect<-seq(1:10)*0.02+0.04
+PM<-c(seq(1:8)*20-10,166)  ### initiate Pm sequence
+lam.vect<-seq(1:10)*0.02+0.04  ###initiate lambda sequence
 
-grid.err<-matrix(nrow=length(PM),ncol=length(lam.vect))
-lam.sel<-NULL
-beta.shrink.ar1.mat<-NULL
-var.sand.ar1.mat<-NULL
-flag.stop.ar1.vect<-NULL
+### Run PGS
+PGS(y.vect,M,COV,PS,PM,lam.vect,n,m)
 
-alpha.ar1.vect<-NULL
-est.sigma2.ar1.vect<-NULL
 
-cvgrps<-cvFolds(n, K = fold,type = "random")
 
-mirnas.ps<-mirnas[,ps_lmm[,1]]             ###############LMM-based PGS,change ps_lmm to ps_gee for GEE-based PGS
-for (k in 1:length(PM)){
-  pm<-PM[k]
-  print(pm)
-  x.mat.1<-mirnas.ps[,1:pm]
-  x.mat<-as.matrix(cbind(x.mat.1,confounders))
-  temp.run<-one_run_grid(y.vect, x.mat, id.vect, n, pm+10, m, rho, lam.vect, fold, eps, eps.stop, max.step)
-  
-  grid.err[k,]<-temp.run$lam.cv.vect/20
-  lam.sel=c(lam.sel, temp.run$lam.sel.ar1)
-  
-  beta.shrink.ar1.mat=c(beta.shrink.ar1.mat, temp.run$beta.shrink.ar1)
-  var.sand.ar1.mat=c(var.sand.ar1.mat, temp.run$var.sand.ar1)
-  flag.stop.ar1.vect=c(flag.stop.ar1.vect, temp.run$flag.stop.ar1)
-  
-  alpha.ar1.vect=c(alpha.ar1.vect, temp.run$alpha.ar1)
-  est.sigma2.ar1.vect<-c(est.sigma2.ar1.vect, temp.run$est.sigma2.ar1)
-  save.image(file = "gridsearch-lmm.RData")
-}
-beta.shrink.lmm<-beta.shrink.ar1.mat
-var.lmm<-var.sand.ar1.mat
-grid.err.lmm<-grid.err
-write.table(beta.shrink.lmm,"beta-lmm1")
-write.table(var.lmm,"var-lmm1")
-write.table(grid.err.lmm,"grid-lmm1")
+###############Visualize the Grid Search results with heat plot
+grid.err<-read.csv("grid.csv",row.names=1,check.names=F)
+best.ind=which(grid.err==min(grid.err),arr.ind=T)
 
-#grid.err<-as.matrix(grid.err)
-rownames(grid.err)<-PM
-colnames(grid.err)<-lam.vect
-MinPm<-rowSums(grid.err==min(grid.err))
-Pm<-MinPm%*%PM                                   ################selected best Pm
-
-length(beta.shrink.ar1.mat)
-
-start<-c(0,cumsum(PM)[-9])+1+seq(1:9)*10-10
-end<-cumsum(PM)+seq(1:9)*10
-
-  start1<-MinPm%*%start
-  end1<-MinPm%*%end
-  beta<-as.numeric(beta.shrink.ar1.mat[start1:end1,])
-  varb<-as.numeric(var.sand.ar1.mat[start1:end1,])
-  beta1<-(abs(beta)>10^-2)
-  
-  PGSlmm<-ps_lmm[1:Pm,1][beta1[1:Pm]]                ##################selected miRNAs by LMM-based PGS
-  mirnames.ps<-mirnames[ps_lmm[,1]]
-  sel.names<-c(mirnames.ps[1:Pm],conf.names)[beta1]
-  est<-beta[beta1]
-  se<-sqrt(varb[beta1])
-  effects<-data.frame(sel.names,est,se)
-
-write.csv(effects,"effects-lmm.csv")
-
-###############heat plot
-
-library(gplots)
 my_palette <- colorRampPalette(c("red", "yellow", "green"))(n = 299)
 my_palette <- colorRampPalette(c("black", "gray", "white"))(n = 299)
 
@@ -185,57 +84,17 @@ col_breaks = c(seq(breaks[1],breaks[2],length=100),  # for red
                seq(breaks[2],breaks[3],length=100),              # for yellow
                seq(breaks[3],breaks[4],length=100))              # for green
 
-heatmap.2(grid.err, 
+
+heatmap.2(data.matrix(grid.err), 
           xlab=expression(lambda),ylab="Pm",
-          main = "LMM-based Grid Search", # heat map title
+          main = "Grid Search", # heat map title
           density.info="none",  # turns off density plot inside color legend
           trace="none",         # turns off trace lines inside the heat map
           col=my_palette,       # use on color palette defined earlier 
           breaks=col_breaks,    # enable color transition at specified limits
           dendrogram="none",     # only draw a row dendrogram
           Colv=NULL,Rowv=NULL)  
+mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
 
-##############Cross Validation for model comparison
+          
 
-gee5<-ps_gee[1:5,1]
-lmm5<-ps_lmm[1:5,1]
-gee10<-ps_gee[1:10,1]
-lmm10<-ps_lmm[1:10,1]
-gee15<-ps_gee[1:15,1]
-lmm15<-ps_lmm[1:15,1]
-gee20<-ps_gee[1:20,1]
-lmm20<-ps_lmm[1:20,1]
-
-all.top<-list(PGSgee,PGSlmm,gee5,gee10,gee15,gee20,lmm5,lmm10,lmm15,lmm20)
-
-repeats<-50
-cvfolds<-10
-cv.err<-outer(rep(0,repeats),rep(0,length(all.top)))
-for (i in 1:repeats){  
-  cvgrps<-cvFolds(n, K=cvfolds,type = "random")
-  obs<-seq(1:n)
-  pred_err<-outer(rep(0,cvfolds),rep(0,length(all.top)))
-  for (j in 1:cvfolds){
-    useobs<-obs[-cvgrps$subsets[cvgrps$which==j]]
-    obs.cv<-obs[cvgrps$subsets[cvgrps$which==j]]
-    y.use=y.vect[c(useobs*2,useobs*2-1)]
-    for (k in 1:length(all.top)) {
-      top5<-all.top[[k]]
-      z.all<- as.matrix(cbind(M[,top5],M[,167:176]))
-      z.use<-z.all[c(useobs*2,useobs*2-1),]
-      id.use<-rep(useobs,each=2)
-      fit.gee<-geeglm(y.use~z.use,id=id.use,corstr="ar1")
-      est<-summary(fit.gee)$coefficients[,1]
-      y.cv<-y.vect[-c(useobs*2,useobs*2-1)]
-      z.cv<-cbind(1,z.all[-c(useobs*2,useobs*2-1),])
-      res<-y.cv-z.cv%*%est
-      pred_err[j,k]<-sum(res^2)
-      #if (j==10) print(pred_err[j,])
-    }    
-  }
-  cv.err[i,]<-colMeans(pred_err)
-}
-round(cv.err,2)
-cverrs.gee<-cv.err
-t.test(cv.err[,1],cv.err[,3],paired=T,alternative ="greater")
-colMeans(cv.err)
