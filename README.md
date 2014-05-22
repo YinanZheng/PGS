@@ -1,4 +1,4 @@
-PGS
+PGS: Penalized GEE with Grid Search
 ===
 
 PGS Application: an example code for PGS demonstration
@@ -9,4 +9,3 @@ SampleData.csv: sample dataset for PGS demonstration
 
 funtioins: r source code for PGS functions
 
-Penalized GEE with Grid Search
