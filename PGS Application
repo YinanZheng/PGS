@@ -2,15 +2,15 @@
 setwd("YourPath/")
 
 ### Install Package "RCurl" to access dataset and source R code from GitHub
-install.package("RCurl")
+#install.packages("RCurl")
 require("RCurl")
-
-### Load Sample data
-DATA<-read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
 
 ### Load PGS functions
 script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
 eval(parse(text = script),envir=.GlobalEnv)
+
+### Load Sample data
+DATA<-read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
 
 y.vect<-DATA$FEV1      ###Extract dependent variable
 id.vect<-DATA$SID      ###Extract subjuect id variable to indicate repeated measures
@@ -19,7 +19,7 @@ COV<-as.matrix(DATA[,170:179])    ###Extract covariate data matrix
 mirnames=colnames(M)
 conf.names=colnames(COV)
 
-###########---- Site-by-site test/Pre-screening with LMM ----###########
+##########---- Site-by-site test/Pre-screening with LMM ----##########
 
 ps_lmm<-matrix(ncol=3,nrow=ncol(M))
 for(i in 1:ncol(M)){
@@ -37,10 +37,10 @@ ps_lmm<-data.frame(cbind(ps_lmm,pvalue))
 ps_lmm$BH.FDR=p.adjust(ps_lmm$pvalue,"fdr")     #######calculate Benjamini and Hochberg FDR
 ps_lmm$qvalue=qvalue(ps_lmm$pvalue)$qvalues     #######calculate Benjamini and Hochberg FDR
 
-
 write.csv(ps_lmm,"PS_LMM.csv")
 
-###########---- Site-by-site test/Pre-screening with GEE ----###########
+
+###########---- Site-by-site test/Pre-screening with GEE ----##########
 
 ps_gee<-matrix(ncol=3,nrow=ncol(M))
 for(i in 1:ncol(M)){
@@ -59,24 +59,24 @@ ps_gee$qvalue=qvalue(ps_gee$pvalue)$qvalues
 write.csv(ps_gee,"PS_GEE.csv")
 
 
-############################Penalized GEE with Grid Search (PGS)########################
-###
+########################---- Penalized GEE with Grid Search (PGS) ----########################
+
 n=120   ### Sample Size
 m=2     ### Repeated measurement times
 
 cvgrps<-cvFolds(n, K = 20,type = "random")  ### Generate a 20-fold cross validation scheme
 
-PS<-read.csv("PS_LMM.csv")  ###Import LMM prescreening results
+PS<-read.csv("PS_LMM.csv")  ###Import LMM prescreening results (LMM-based PGS)
+#PS<-read.csv("PS_GEE.csv")  ###Import GEE prescreening results (GEE-based PGS)
 
 PM<-c(seq(1:8)*20-10,166)  ### initiate Pm sequence
-lam.vect<-seq(1:10)*0.02+0.04  ###initiate lambda sequence
+lam.vect<-seq(0.06,0.24,0.02)  ###initiate lambda sequence
 
 ### Run PGS
 PGS(y.vect,M,COV,PS,PM,lam.vect,n,m)
 
 
-
-###############Visualize the Grid Search results with heat plot
+########################---- Visualize the Grid Search results with heat plot ----########################
 grid.err<-read.csv("grid.csv",row.names=1,check.names=F)
 best.ind=which(grid.err==min(grid.err),arr.ind=T)
 
@@ -88,7 +88,6 @@ col_breaks = c(seq(breaks[1],breaks[2],length=100),  # for red
                seq(breaks[2],breaks[3],length=100),              # for yellow
                seq(breaks[3],breaks[4],length=100))              # for green
 
-
 heatmap.2(data.matrix(grid.err), 
           xlab=expression(lambda),ylab="Pm",
           main = "Grid Search", # heat map title
@@ -98,7 +97,7 @@ heatmap.2(data.matrix(grid.err),
           breaks=col_breaks,    # enable color transition at specified limits
           dendrogram="none",     # only draw a row dendrogram
           Colv=NULL,Rowv=NULL)  
-mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
+          mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
 
           
 
