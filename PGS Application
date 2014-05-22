@@ -1,6 +1,10 @@
 ### Initiate a folder for storing the results
 setwd("YourPath/")
 
+### Install Package "RCurl" to access dataset and source R code from GitHub
+install.package("RCurl")
+require("RCurl")
+
 ### Load Sample data
 DATA<-read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
 
