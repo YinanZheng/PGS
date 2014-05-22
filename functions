@@ -407,57 +407,56 @@ PGS<-function(y.vect,          ####
 	      max.step=50,
 	      str.y="ar1"
               ){
-mirnames=colnames(M)
-conf.names=colnames(COV)
+  mirnames=colnames(M)
+  conf.names=colnames(COV)
 
-grid.err<-matrix(nrow=length(PM),ncol=length(lam.vect))   ### Initiate error grid
-lam.sel<-NULL                ### Initiate optimized lambda
-beta.shrink.ar1.mat<-NULL    ### Initiate Beta (coefficient) estimates 
-var.sand.ar1.mat<-NULL       ### Initiate Variance 
+  grid.err<-matrix(nrow=length(PM),ncol=length(lam.vect))   ### Initiate error grid
+  lam.sel<-NULL                ### Initiate optimized lambda
+  beta.shrink.ar1.mat<-NULL    ### Initiate Beta (coefficient) estimates 
+  var.sand.ar1.mat<-NULL       ### Initiate Variance 
 
-flag.stop.ar1.vect<-NULL     ### WHAT IS THIS
-alpha.ar1.vect<-NULL         ### WHAT IS THIS
-est.sigma2.ar1.vect<-NULL    ### WHAT IS THIS
+  flag.stop.ar1.vect<-NULL     ### WHAT IS THIS
+  alpha.ar1.vect<-NULL         ### WHAT IS THIS
+  est.sigma2.ar1.vect<-NULL    ### WHAT IS THIS
 
-mirnas.ps<-M[,PS[,1]] 
+  mirnas.ps<-M[,PS[,1]] 
          
-for (k in 1:length(PM)){
-  pm<-PM[k]
-  print(pm)
-  x.mat.1<-mirnas.ps[,1:pm]
-  x.mat<-as.matrix(cbind(x.mat.1,COV))
+  for (k in 1:length(PM)){
+    pm<-PM[k]
+    print(pm)
+    x.mat.1<-mirnas.ps[,1:pm]
+    x.mat<-as.matrix(cbind(x.mat.1,COV))
 
-  temp.run<-one_run_grid(y.vect, x.mat, id.vect, n, pm+ncol(COV), m, rho, lam.vect, fold, eps, eps.stop, max.step)
-                                                 
-  grid.err[k,]<-temp.run$lam.cv.vect/fold
-  lam.sel=c(lam.sel, temp.run$lam.sel.ar1)
+    temp.run<-one_run_grid(y.vect, x.mat, id.vect, n, pm+ncol(COV), m, rho, lam.vect, fold, eps, eps.stop, max.step)
+                                                  
+    grid.err[k,]<-temp.run$lam.cv.vect/fold
+    lam.sel=c(lam.sel, temp.run$lam.sel.ar1)
   
-  beta.shrink.ar1.mat=c(beta.shrink.ar1.mat, temp.run$beta.shrink.ar1)
-  var.sand.ar1.mat=c(var.sand.ar1.mat, temp.run$var.sand.ar1)
-  flag.stop.ar1.vect=c(flag.stop.ar1.vect, temp.run$flag.stop.ar1)
+    beta.shrink.ar1.mat=c(beta.shrink.ar1.mat, temp.run$beta.shrink.ar1)
+    var.sand.ar1.mat=c(var.sand.ar1.mat, temp.run$var.sand.ar1)
+    flag.stop.ar1.vect=c(flag.stop.ar1.vect, temp.run$flag.stop.ar1)
   
-  alpha.ar1.vect=c(alpha.ar1.vect, temp.run$alpha.ar1)
-  est.sigma2.ar1.vect<-c(est.sigma2.ar1.vect, temp.run$est.sigma2.ar1)
-}
-beta.shrink<-beta.shrink.ar1.mat
-var<-var.sand.ar1.mat
-grid.err<-grid.err
-#write.csv(beta.shrink,"beta.csv")     # Save the beta estimates
-#write.csv(var,"var.csv")        # Save the variance estimates
+    alpha.ar1.vect=c(alpha.ar1.vect, temp.run$alpha.ar1)
+    est.sigma2.ar1.vect<-c(est.sigma2.ar1.vect, temp.run$est.sigma2.ar1)
+    }
+  beta.shrink<-beta.shrink.ar1.mat
+  var<-var.sand.ar1.mat
+  grid.err<-grid.err
+  #write.csv(beta.shrink,"beta.csv")     # Save the beta estimates
+  #write.csv(var,"var.csv")        # Save the variance estimates
 
-rownames(grid.err)<-PM
-colnames(grid.err)<-lam.vect
-write.csv(grid.err,"grid.csv")    # Save the CV-error grid
-print("Cross-validation error grid saved")
+  rownames(grid.err)<-PM  
+  colnames(grid.err)<-lam.vect
+  write.csv(grid.err,"grid.csv")    # Save the CV-error grid
+  print("Cross-validation error grid saved")
 
-best.ind<-which(grid.err==min(grid.err),arr.ind=T)
-print(paste0("The best selection results achieved using top ",PM[best.ind[1]],
-" biomarkers with lambda = ",lam.vect[best.ind[2]]))
-MinPm<-rowSums(grid.err==min(grid.err))
-Pm<-MinPm%*%PM    # selected best Pm
+  best.ind<-which(grid.err==min(grid.err),arr.ind=T)
+  print(paste0("The best selection results achieved using top ",PM[best.ind[1]]," biomarkers with lambda = ",lam.vect[best.ind[2]]))
+  MinPm<-rowSums(grid.err==min(grid.err))
+  Pm<-MinPm%*%PM    # selected best Pm
 
-start<-c(0,cumsum(PM)[-length(PM)])+1+seq(1:length(PM))*ncol(COV)-ncol(COV)
-end<-cumsum(PM)+seq(1:length(PM))*ncol(COV)
+  start<-c(0,cumsum(PM)[-length(PM)])+1+seq(1:length(PM))*ncol(COV)-ncol(COV)
+  end<-cumsum(PM)+seq(1:length(PM))*ncol(COV)
 
   start1<-MinPm%*%start
   end1<-MinPm%*%end
@@ -471,7 +470,6 @@ end<-cumsum(PM)+seq(1:length(PM))*ncol(COV)
   se<-sqrt(varb[beta1])
   effects<-data.frame(sel.names,est,se)
 
-write.csv(effects,"effects.csv")   # Save the final selection results 
-print("Final PGS selected results saved")
-
+  write.csv(effects,"effects.csv")   # Save the final selection results 
+  print("Final PGS selected results saved")
 }
