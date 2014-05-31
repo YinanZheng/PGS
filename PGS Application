@@ -19,6 +19,30 @@ COV<-as.matrix(DATA[,170:179])    ###Extract covariate data matrix
 mirnames=colnames(M)
 conf.names=colnames(COV)
 
+##################transformation of some of the confounders
+pdf("hist_confounders.pdf")##############look at empirical distribution of each confounder
+par(mfrow=c(3,1))
+for (i in 1:length(conf.names)){
+  xname<-conf.names[i]
+  hist(COV[,i],xlab=xname)
+}
+dev.off()
+
+COV$female<-COV$SEX-1
+COV$logpm25<-log(COV$pm25)
+COV$CIGS<-1-(COV$CIGS_WEAR==0)
+COV$logWAY_TIME<-(log(COV$WAY_TIME))
+COV$HEAT_CENTER<-COV$HEAT_CENTER-1                ###########transform to indicator
+conf.names<-c("logpm25","female","age","bmi","HEAT_CENTER","CIGS","logWAY_TIME","WORK_HR_DAY","DEWP","Atemp")
+COV<-COV[,conf.names]
+
+pdf("hist_confounders_transformed.pdf") ##############look at transformed confounders
+par(mfrow=c(3,1))
+for (i in 1:length(conf.names)){
+  xname<-conf.names[i]
+  hist(COV[,i],xlab=xname)
+}
+dev.off()
 ##########---- Site-by-site test/Pre-screening with LMM ----##########
 
 ps_lmm<-matrix(ncol=3,nrow=ncol(M))
