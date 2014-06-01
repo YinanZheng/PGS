@@ -5,6 +5,11 @@ setwd("YourPath/")
 #install.packages("RCurl")
 require("RCurl")
 
+### Install Package "qvalue" to calculate FDR q-values for site-by-site testing
+#source("http://bioconductor.org/biocLite.R")
+#biocLite("qvalue")
+require("qvalue")
+
 ### Load PGS functions
 script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
 eval(parse(text = script),envir=.GlobalEnv)
