@@ -425,9 +425,9 @@ PGS<-function(y.vect,          ####
   beta.shrink.ar1.mat<-NULL    ### Initiate Beta (coefficient) estimates 
   var.sand.ar1.mat<-NULL       ### Initiate Variance 
 
-  flag.stop.ar1.vect<-NULL     ### WHAT IS THIS
-  alpha.ar1.vect<-NULL         ### WHAT IS THIS
-  est.sigma2.ar1.vect<-NULL    ### WHAT IS THIS
+  flag.stop.ar1.vect<-NULL     
+  alpha.ar1.vect<-NULL         
+  est.sigma2.ar1.vect<-NULL    
 
   mirnas.ps<-M[,PS[,1]] 
          
