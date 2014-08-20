@@ -28,14 +28,9 @@ mirnames=colnames(M)              ### Extract miRNA names
 conf.names=colnames(COV)          ### Extract confounder names
 
 
-##########---- Standardization of miRNAs ----##########
+##########---- Standardization of miRNAs (Option) ----##########
 
-rnameans<-colMeans(M)
-rnasds<-apply(M,2,sd)
-for(i in 1:length(rnasds)){
-M[,i]<-(M[,i]-rnameans[i])/rnasds[i]
-}
-
+#M<-scale(M)
 
 ##########---- Site-by-site test/Pre-screening with LMM ----##########
 
