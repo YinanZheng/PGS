@@ -28,7 +28,8 @@ mirnames=colnames(M)              ### Extract miRNA names
 conf.names=colnames(COV)          ### Extract confounder names
 
 
-##########---- Standardization of miRNAs (Option) ----##########
+##########---- Standardization of miRNAs  ----##########
+## (Since the example miRNA data have been normalized, we can skip this step) ##
 
 #M<-scale(M)
 
