@@ -5,7 +5,7 @@
 setwd("YourPath/")
 
 ### Install Package "RCurl" to access dataset and source R code from GitHub
-#install.packages("RCurl")
+install.packages("RCurl")
 require("RCurl")
 
 ### Install Package "qvalue" to calculate FDR q-values for site-by-site testing
