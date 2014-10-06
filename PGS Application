@@ -29,9 +29,8 @@ conf.names=colnames(COV)          ### Extract confounder names
 
 
 ##########---- Standardization of miRNAs  ----##########
-## (Since the example miRNA data have been normalized, we can skip this step) ##
 
-#M<-scale(M)
+M<-scale(M)
 
 ##########---- Site-by-site test/Pre-screening with LMM ----##########
 
