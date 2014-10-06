@@ -79,3 +79,44 @@ rho=0.5;sigma2=1;lam.vect=seq(1:10)*0.03-0.02;PM=seq(1:10)*20;fold=10;eps=10^(-7
     write.table(Alpha.ar1.vect,"Alpha.ar1.vect")
     write.table(Est.sigma2.ar1.vect,"Est.sigma2.ar1.vect")
   }
+
+
+generate_normal<-function(n, pn, m, str.y, beta.true, rho, sigma2)
+{
+  
+  y.vect<-NULL
+  x.mat<-NULL
+  id.vect<-rep(1:n, each=m)
+  
+  R<-matrix(0,m,m)
+  
+  if(str.y=="exch")
+    R<-matrix(rho,m,m)+diag(rep(1-rho,m))
+  if(str.y=="ar1")
+  {
+    for (i in 1:m)
+      R[i,]<-rho^(abs((1:m)-i))  
+  }
+  
+  SIGMA<-sigma2*R
+  
+  X.sigma<-matrix(0,(pn),(pn))
+
+    for (i in 1:(pn)){
+      X.sigma[i,]<-0.7^(abs((1:(pn))-i))  
+  }
+  
+  x.mat<-as.matrix(rmvnorm(n*m, mean=rep(0,(pn)), X.sigma))
+  
+  #x.mat<-cbind(rbinom(n*m,1, 0.5), x.mat)
+  
+  y.temp<-x.mat%*%matrix(beta.true, ncol=1)
+  error<-rmvnorm(n, mean=rep(0,m),SIGMA)
+  
+  y.vect<-y.temp+as.vector(t(error))   
+  
+  id.vect<-rep(1:n, each=m) 
+  
+  return(list(y.vect=y.vect, x.mat=x.mat, id.vect=id.vect, m=m, n=n, pn=pn, beta.true=beta.true, rho=rho, str.y=str.y))
+  
+}
