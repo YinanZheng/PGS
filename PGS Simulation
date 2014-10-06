@@ -7,9 +7,9 @@ require("RCurl")
 script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
 eval(parse(text = script),envir=.GlobalEnv)
 
-run=100;n=120
-n=120
-m=2 
+run=100  # Run 100 times
+n=120    # Sample size = 120
+m=2      # Two measurements for each sample
 pn=200;str.y="ar1";beta.true=c(1,1,.2,.1,.06,.03,rep(0,194))
 rho=0.5;sigma2=1;lam.vect=seq(1:10)*0.03-0.02;PM=seq(1:10)*20;fold=10;eps=10^(-7);eps.stop=10^(-7);max.step=50
 
