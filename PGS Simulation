@@ -2,6 +2,7 @@ library(geepack)
 library(mvtnorm)
 library(cvTools)
 
+require("RCurl")
 ### Load PGS functions
 script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
 eval(parse(text = script),envir=.GlobalEnv)
