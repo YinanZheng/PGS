@@ -2,6 +2,10 @@ library(geepack)
 library(mvtnorm)
 library(cvTools)
 
+### Load PGS functions
+script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions",ssl.verifypeer = FALSE)
+eval(parse(text = script),envir=.GlobalEnv)
+
 run=100;n=120
 n=120
 m=2 
