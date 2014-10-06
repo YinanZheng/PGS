@@ -82,8 +82,8 @@ cvgrps<-cvFolds(n, K = 20,type = "random")  ### Generate a 20-fold cross validat
 PS<-read.csv("PS_LMM.csv")   ### Import LMM prescreening results (LMM-based PGS)
 #PS<-read.csv("PS_GEE.csv")  ### Import GEE prescreening results (GEE-based PGS)
 
-PM<-c(seq(1:8)*20-10,166)      ### Initiate Pm sequence
-lam.vect<-seq(0.06,0.24,0.02)  ### Initiate lambda sequence
+PM.vect<-c(seq(1:8)*20-10,166)      ### Initiate Pm sequence: Number of top ranking biomarkers
+lam.vect<-seq(0.06,0.24,0.02)  ### Initiate lambda sequence: Penalty parameter of PGEE
 
 ### Run PGS
 PGS(y.vect,M,COV,PS,PM,lam.vect,n,m)
