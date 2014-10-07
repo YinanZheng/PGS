@@ -33,20 +33,20 @@ generate_normal<-function(n, pn, m, str.y, beta.true, rho, sigma2)
     for (i in 1:(pn-1))
       X.sigma[i,]<-0.5^(abs((1:(pn-1))-i))  
   }
-  
-  x.mat<-as.matrix(rmvnorm(n*m, mean=rep(0,(pn-1)), X.sigma))
-  
-  x.mat<-cbind(rbinom(n*m,1, 0.5), x.mat)
-  
-  y.temp<-x.mat%*%matrix(beta.true, ncol=1)
-  error<-rmvnorm(n, mean=rep(0,m),SIGMA)
-  
-  y.vect<-y.temp+as.vector(t(error))   
-  
-  id.vect<-rep(1:n, each=m) 
-  
-  return(list(y.vect=y.vect, x.mat=x.mat, id.vect=id.vect, m=m, n=n, pn=pn, beta.true=beta.true, rho=rho, str.y=str.y))
-  
+
+x.mat<-as.matrix(rmvnorm(n*m, mean=rep(0,(pn-1)), X.sigma))
+
+x.mat<-cbind(rbinom(n*m,1, 0.5), x.mat)
+
+y.temp<-x.mat%*%matrix(beta.true, ncol=1)
+error<-rmvnorm(n, mean=rep(0,m),SIGMA)
+
+y.vect<-y.temp+as.vector(t(error))   
+
+id.vect<-rep(1:n, each=m) 
+
+return(list(y.vect=y.vect, x.mat=x.mat, id.vect=id.vect, m=m, n=n, pn=pn, beta.true=beta.true, rho=rho, str.y=str.y))
+
 }
 
 q_scad<-function(theta,lambda,a=3.7)
@@ -98,10 +98,10 @@ S_H_E_normal<-function(y.vect, x.mat, id.vect, hat.R, beta.val, lam, eps)
 
 beta_shrink_normal<-function(y.vect, x.mat, hat.R, beta.ini, id.vect, lam, eps, eps.stop, max.step)
 {
-   
+  
   n<-length(unique(id.vect))
   m<-length(y.vect)/n
- 
+  
   
   beta.new<-matrix(beta.ini, ncol=1)
   step.up<-0
@@ -276,11 +276,11 @@ est_pgee_grid<-function(y.vect, x.mat, hat.R, beta.ini,id.vect, lam.vect, fold, 
   
   beta.fit<-beta_shrink_normal(y.vect, x.mat, hat.R, beta.ini, id.vect, lam=lam.sel, eps, eps.stop, max.step)
   return(list(
-              lam.cv.vector=lam.cv.vector,
-              beta.shrink=beta.fit$beta.shrink,
-              var.sand=beta.fit$var.sand, 
-              flag.stop=beta.fit$flag.stop, 
-              lam.sel=lam.sel, est.sigma2=beta.fit$est.sigma2))
+    lam.cv.vector=lam.cv.vector,
+    beta.shrink=beta.fit$beta.shrink,
+    var.sand=beta.fit$var.sand, 
+    flag.stop=beta.fit$flag.stop, 
+    lam.sel=lam.sel, est.sigma2=beta.fit$est.sigma2))
 }
 
 one_run_grid<-function(y.vect, x.mat, id.vect, n, pn, m, rho,lam.vect, fold, eps, eps.stop, max.step)
@@ -304,14 +304,14 @@ one_run_grid<-function(y.vect, x.mat, id.vect, n, pn, m, rho,lam.vect, fold, eps
               lam.sel.ar1=beta.fit.ar1$lam.sel,
               
               alpha.ar1=hat.R.ar1[1,2],
-                           
+              
               est.sigma2.ar1=beta.fit.ar1$est.sigma2              
   ))
   
   
 } 
 
-sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fold, eps, eps.stop, max.step)
+sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,Pm.vect, fold, eps, eps.stop, max.step)
 { 
   Beta.shrink.ar1.mat<-NULL
   Var.sand.ar1.mat<-NULL
@@ -319,7 +319,7 @@ sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fo
   
   Alpha.ar1.vect<-NULL
   Est.sigma2.ar1.vect<-NULL
-    
+  
   GRID.ERR<-NULL
   LAM.SEL<-NULL
   
@@ -327,7 +327,7 @@ sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fo
   {
     print(i)
     
-    grid.err<-matrix(nrow=length(PM),ncol=length(lam.vect))
+    grid.err<-matrix(nrow=length(Pm.vect),ncol=length(lam.vect))
     lam.sel<-NULL
     beta.shrink.ar1.mat<-NULL
     var.sand.ar1.mat<-NULL
@@ -344,8 +344,8 @@ sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fo
     
     cvgrps<-cvFolds(n, K = fold,type = "random")
     
-    for (k in 1:length(PM)){
-      pm<-PM[k]
+    for (k in 1:length(Pm.vect)){
+      pm<-Pm.vect[k]
       print(pm)
       temp.run<-one_run_grid(y.vect, x.mat[,1:pm], id.vect, n, pm, m, rho, lam.vect, fold, eps, eps.stop, max.step)
       
@@ -355,11 +355,11 @@ sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fo
       beta.shrink.ar1.mat=c(beta.shrink.ar1.mat, temp.run$beta.shrink.ar1)
       var.sand.ar1.mat=c(var.sand.ar1.mat, temp.run$var.sand.ar1)
       flag.stop.ar1.vect=c(flag.stop.ar1.vect, temp.run$flag.stop.ar1)
-    
+      
       alpha.ar1.vect=c(alpha.ar1.vect, temp.run$alpha.ar1)
       est.sigma2.ar1.vect<-c(est.sigma2.ar1.vect, temp.run$est.sigma2.ar1)
-        
-  }
+      
+    }
     LAM.SEL<-rbind(LAM.SEL,lam.sel)
     GRID.ERR<-rbind(GRID.ERR,grid.err)
     
@@ -401,73 +401,74 @@ sim.grid<-function(run, n, pn, m, str.y, beta.true, rho, sigma2, lam.vect,PM, fo
   
 }
 
-PGS<-function(y.vect,          ####
-	      M,
-	      COV,
-     	      PS,
-	      PM,
-	      lam.vect,
-	      n,
-	      m,
-	      rho=0.3,
-	      fold=20,
-	      sigcut=10^-3,
-	      eps=10^-10,
-	      eps.stop=0,
-	      max.step=50,
-	      str.y="ar1"
-              ){
+PGS<-function(y.vect,          #### Dependent variable vector
+              id.vect,         #### Subjuect id variable to indicate repeated measures
+              M,               #### Biomarkers matrix (each row represents samples, each column represents biomarkers/probes)
+              COV,	       #### Covariates matrix
+              PS,	       #### Prescreening results. Should have been properly ranked. The first column must be the biomarkers name and must be the same as the column names of biomarkers matrix)
+              Pm.vect,         #### Pm vector, a vector of the number of top ranking biomarkers 	       
+              lam.vect,        #### lambda vector, a vector of PGEE penalty parameter
+              n,               #### Sample size
+              m,               #### Number of repeated measures
+              rho=0.3,         ####
+              fold=20,         #### 20-fold cross-validation for calculating grid error
+              sigcut=10^-3,    #### If PGS estimate of biomarker is greater than 0.001, then the biomarker is selected 
+              eps=10^-10,      ####
+              eps.stop=0,      ####
+              max.step=50,     ####
+              str.y="ar1"      ####
+){
   mirnames=colnames(M)
   conf.names=colnames(COV)
-
-  grid.err<-matrix(nrow=length(PM),ncol=length(lam.vect))   ### Initiate error grid
+  
+  grid.err<-matrix(nrow=length(Pm.vect),ncol=length(lam.vect))   ### Initiate error grid
   lam.sel<-NULL                ### Initiate optimized lambda
   beta.shrink.ar1.mat<-NULL    ### Initiate Beta (coefficient) estimates 
   var.sand.ar1.mat<-NULL       ### Initiate Variance 
-
+  
   flag.stop.ar1.vect<-NULL     
   alpha.ar1.vect<-NULL         
   est.sigma2.ar1.vect<-NULL    
-
+  
   mirnas.ps<-M[,PS[,1]] 
-         
-  for (k in 1:length(PM)){
-    pm<-PM[k]
+  
+  for (k in 1:length(Pm.vect)){
+    pm<-Pm.vect[k]
     print(pm)
     x.mat.1<-mirnas.ps[,1:pm]
     x.mat<-as.matrix(cbind(x.mat.1,COV))
-
+    
     temp.run<-one_run_grid(y.vect, x.mat, id.vect, n, pm+ncol(COV), m, rho, lam.vect, fold, eps, eps.stop, max.step)
-                                                  
+    
     grid.err[k,]<-temp.run$lam.cv.vect/fold
     lam.sel=c(lam.sel, temp.run$lam.sel.ar1)
-  
+    
     beta.shrink.ar1.mat=c(beta.shrink.ar1.mat, temp.run$beta.shrink.ar1)
     var.sand.ar1.mat=c(var.sand.ar1.mat, temp.run$var.sand.ar1)
     flag.stop.ar1.vect=c(flag.stop.ar1.vect, temp.run$flag.stop.ar1)
-  
+    
     alpha.ar1.vect=c(alpha.ar1.vect, temp.run$alpha.ar1)
     est.sigma2.ar1.vect<-c(est.sigma2.ar1.vect, temp.run$est.sigma2.ar1)
-    }
+  }
   beta.shrink<-beta.shrink.ar1.mat
   var<-var.sand.ar1.mat
   grid.err<-grid.err
   #write.csv(beta.shrink,"beta.csv")     # Save the beta estimates
   #write.csv(var,"var.csv")        # Save the variance estimates
-
-  rownames(grid.err)<-PM  
+  
+  rownames(grid.err)<-Pm.vect  
   colnames(grid.err)<-lam.vect
   write.csv(grid.err,"grid.csv")    # Save the CV-error grid
   print("Cross-validation error grid saved")
-
+  
   best.ind<-which(grid.err==min(grid.err),arr.ind=T)
-  print(paste0("The best selection results achieved using top ",PM[best.ind[1]]," biomarkers with lambda = ",lam.vect[best.ind[2]]))
+  print(paste0("The best selection results achieved using top ",Pm.vect[best.ind[1]]," biomarkers with lambda = ",lam.vect[best.ind[2]]))
   MinPm<-rowSums(grid.err==min(grid.err))
-  Pm<-MinPm%*%PM    # selected best Pm
-
-  start<-c(0,cumsum(PM)[-length(PM)])+1+seq(1:length(PM))*ncol(COV)-ncol(COV)
-  end<-cumsum(PM)+seq(1:length(PM))*ncol(COV)
-
+  Pm<-MinPm%*%Pm.vect    # selected best Pm
+  
+  start<-c(0,cumsum(Pm.vect)[-length(Pm.vect)])+1+seq(1:length(Pm.vect))*ncol(COV)-ncol(COV)
+  end<-cumsum(Pm.vect)+seq(1:length(Pm.vect))*ncol(COV)
+  
   start1<-MinPm%*%start
   end1<-MinPm%*%end
   beta<-as.numeric(beta.shrink.ar1.mat[start1:end1])
@@ -479,7 +480,8 @@ PGS<-function(y.vect,          ####
   est<-beta[beta1]
   se<-sqrt(varb[beta1])
   effects<-data.frame(sel.names,est,se)
-
+  
   write.csv(effects,"effects.csv")   # Save the final selection results 
   print("Final PGS selected results saved")
 }
+
