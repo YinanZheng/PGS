@@ -5,7 +5,7 @@
 setwd("YourPath/")
 
 ### Install Package "RCurl" to access dataset and source R code from GitHub
-install.packages("RCurl")
+#install.packages("RCurl")
 require("RCurl")
 
 ### Install Package "qvalue" to calculate FDR q-values for site-by-site testing
@@ -18,8 +18,14 @@ script <- getURL("https://raw.githubusercontent.com/feizhe/PGS/master/functions"
 eval(parse(text = script),envir=.GlobalEnv)
 
 ### Load Sample data
-DATA<-read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
+DATA <- read.csv(text=getURL("https://raw.githubusercontent.com/feizhe/PGS/master/SampleData.csv",ssl.verifypeer = FALSE))
 
+### Sort the dataset by ID and repeated measures indicator
+### In this example, the ID is "SID" column, the "WD" column indicates the examination day.
+
+DATA <- DATA[with(DATA, order(SID, WD)), ]
+
+### Extract outcome, biomarkers(miRNAs), and confounder variables
 y.vect<-DATA$FEV1      ### Extract dependent variable
 id.vect<-DATA$SID      ### Extract subjuect id variable to indicate repeated measures
 M<-as.matrix(DATA[,4:169])        ### Extract microRNA data matrix (row=samples, column=miRNA probes)
@@ -82,11 +88,11 @@ cvgrps<-cvFolds(n, K = 20,type = "random")  ### Generate a 20-fold cross validat
 PS<-read.csv("PS_LMM.csv")   ### Import LMM prescreening results (LMM-based PGS)
 #PS<-read.csv("PS_GEE.csv")  ### Import GEE prescreening results (GEE-based PGS)
 
-PM.vect<-c(seq(1:8)*20-10,166)      ### Initiate Pm sequence: Number of top ranking biomarkers
-lam.vect<-seq(0.06,0.24,0.02)  ### Initiate lambda sequence: Penalty parameter of PGEE
+Pm.vect<-c(seq(1:8)*20-10,166)      ### Initiate Pm sequence: Number of top ranking biomarkers
+lam.vect<-seq(0.02,0.12,0.02)  ### Initiate lambda sequence: Penalty parameter of PGEE
 
 ### Run PGS
-PGS(y.vect,M,COV,PS,PM.vect,lam.vect,n,m) 
+PGS(y.vect,id.vect,M,COV,PS,Pm.vect,lam.vect,n,m) 
 
 
 ########################---- Visualize the Grid Search results with heat plot ----########################
@@ -110,6 +116,7 @@ heatmap.2(data.matrix(grid.err),
           breaks=col_breaks,    # enable color transition at specified limits
           dendrogram="none",    # no dendrogram
           Colv=NULL,Rowv=NULL)  
-          mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
+mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
 dev.off()
+
 
