@@ -86,7 +86,7 @@ PM.vect<-c(seq(1:8)*20-10,166)      ### Initiate Pm sequence: Number of top rank
 lam.vect<-seq(0.06,0.24,0.02)  ### Initiate lambda sequence: Penalty parameter of PGEE
 
 ### Run PGS
-PGS(y.vect,M,COV,PS,PM,lam.vect,n,m)
+PGS(y.vect,M,COV,PS,PM.vect,lam.vect,n,m) 
 
 
 ########################---- Visualize the Grid Search results with heat plot ----########################
@@ -100,6 +100,7 @@ col_breaks = c(seq(breaks[1],breaks[2],length=100),  # for black
                seq(breaks[2],breaks[3],length=100),  # for gray
                seq(breaks[3],breaks[4],length=100))  # for white
 
+pdf("PGS_Grid.pdf", width = 8, height = 8,pointsize=12)  ## Output the Grid Search heatmap in PDF format
 heatmap.2(data.matrix(grid.err), 
           xlab=expression(lambda),ylab="Pm",
           main = "Grid Search", # heat map title
@@ -110,6 +111,5 @@ heatmap.2(data.matrix(grid.err),
           dendrogram="none",    # no dendrogram
           Colv=NULL,Rowv=NULL)  
           mtext(paste0("Optimized Pm=",rownames(grid.err)[best.ind[1]]," lambda=",colnames(grid.err)[best.ind[2]]))
-
-          
+dev.off()
 
