@@ -8,7 +8,7 @@ https://github.com/YinanZheng/PGS/releases
 https://github.com/YinanZheng/PGS/wiki
 
 ##Log:
-2015.08.09: PGS package is now available. 
+2015.08.09: PGS package v1.0 (pre-release) is now available. 
 
 ##Citation:
 Yinan Zheng, Zhe Fei, Wei Zhang, Justin B. Starren, Lei Liu, Andrea A. Baccarelli,
