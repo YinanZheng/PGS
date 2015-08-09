@@ -5,16 +5,5 @@ Yi Li, and Lifang Hou: PGS: a tool for association study of high-dimensional mic
 
 NEWS: 
 ===
-2014.09.24: We are working on improving the computational efficienty of the functions. Comming soon. 
-
-Descriptions:
-===
-
-PGS Application: an example code for PGS demonstration
-
-PGS Simulation: simulation code for PGS evaluation
-
-SampleData.csv: sample dataset for PGS demonstration
-
-funtioins: r source code for PGS functions
+2015.08.09: PGS package v1.0 is now available. The algorithm is written in Rcpp and RcppArmadillo. 
 
