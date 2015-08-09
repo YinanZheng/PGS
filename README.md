@@ -7,11 +7,13 @@ https://github.com/YinanZheng/PGS/releases
 ##Examples:
 https://github.com/YinanZheng/PGS/wiki
 
-##News:
+##Log:
 2015.08.09: PGS package is now available. 
 
-Please cite: Yinan Zheng, Zhe Fei, Wei Zhang, Justin B. Starren, Lei Liu, Andrea A. Baccarelli,
+##Citation:
+Yinan Zheng, Zhe Fei, Wei Zhang, Justin B. Starren, Lei Liu, Andrea A. Baccarelli,
 Yi Li, and Lifang Hou: PGS: a tool for association study of high-dimensional microRNA expression data with repeated measures. Bioinformatics 2014. PubMed PMID: 24947752.
+http://www.ncbi.nlm.nih.gov/pubmed/24947752
 
 
 
