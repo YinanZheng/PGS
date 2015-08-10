@@ -28,7 +28,7 @@ prLMM <- function(y.vect, id.vect, M, COV=NULL, parallel=TRUE, write=FALSE)
   doOne <- function(i, datarun){
     datarun$Mone <- M[,i]
     model <- try(lmer(modelstatement, data = datarun))
-    if(class(model) == "try-error"){
+    if("try-error" %in% class(model)){
       b <- rep(NA, 3)
     } else {
       res=summary(model)$coefficients

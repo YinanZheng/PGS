@@ -28,7 +28,7 @@ prGEE <- function(y.vect, id.vect, M, COV=NULL, parallel=TRUE, write=FALSE)
   doOne <- function(i, datarun){
     datarun$Mone <- M[,i]
     model <- try(geeglm(modelstatement, data = datarun, id = id.vect))
-    if(class(model) == "try-error"){
+    if("try-error" %in% class(model)){
       b <- rep(NA, 4)
     } else {
       res=summary(model)$coefficients
