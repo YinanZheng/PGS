@@ -105,9 +105,7 @@ PGS<-function(
   coefficients$Sig[sign(coefficients$CP.lower) == sign(coefficients$CP.upper)] = 1 
   
   coefficients = coefficients[order(coefficients$Sig, abs(coefficients$Estimate),decreasing = T),]
-  # write.csv(coefficients,"coefficients.csv")   # Save the final selection results 
-  # cat(">>> PGS results saved\n") 
-  
+
   res = list(coefficients = coefficients,
              grid.err = grid.err,
              lam.sel = lam.sel,
@@ -116,7 +114,7 @@ PGS<-function(
              est.sigma2.corr = est.sigma2.corr.vect[best.ind[1]],
              Pm.vect = Pm.vect,
              lam.vect = lam.vect)
-  cat(paste0("Done!    (",Sys.time(),")"))
+  cat(paste0("Done!    (",Sys.time(),")\n"))
   
   cat(paste0(">>> The best selection results achieved using top ",Pm.vect[best.ind[1]]," biomarkers with lambda = ",lam.vect[best.ind[2]]),"\n")
   return(res)
