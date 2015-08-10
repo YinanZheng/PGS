@@ -1,4 +1,4 @@
-########################---- Visualize the Grid Search results with heat plot ----########################
+# Visualize the Grid Search results with heat plot
 
 plotGrid <- function(pgsobj,colrange = NULL)
 {
@@ -30,10 +30,10 @@ plotGrid <- function(pgsobj,colrange = NULL)
   qplot(x=Lambda, y=Pm, data=grid.err.m, fill = value, geom="tile") + 
     scale_fill_gradient(low=col_low, high=col_high) + 
     geom_text(aes(label=small), color="white", size=7) + 
-    geom_text(aes(label=plus), color="yellow", size=15) + 
+    geom_text(aes(label=plus), color="yellow", size=12) + 
     ggtitle(bquote(atop(.(plot.title), atop(italic(.(plot.subtitle)), "")))) +
     theme(plot.title = element_text(size = rel(1.7))) +
     theme(axis.title = element_text(size = rel(1.5))) +
     theme(axis.text = element_text(size = rel(1.2))) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
 }
