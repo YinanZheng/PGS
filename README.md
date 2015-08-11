@@ -2,7 +2,7 @@
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
 ##R Package Download (latest version: v0.0.2):
-https://github.com/YinanZheng/PGS/releases/download/PGS_v0.1/PGS_0.0.2.tar.gz
+https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.2/PGS_0.0.2.tar.gz
 
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
