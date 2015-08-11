@@ -4,7 +4,7 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 ##R Package Download (latest version: v0.0.2):
 https://github.com/YinanZheng/PGS/releases/download/PGS_v0.1/PGS_0.0.2.tar.gz
 
-##Examples:
+##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
 
 ##Citation:
