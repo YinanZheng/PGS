@@ -19,13 +19,33 @@ PGS<-function(
               seed = NULL        #### seed
              )
 {
+  n.marks = dim(M)[2]
+  PGS.limit = min(n * m, n.marks)
+  
+  if (max(Pm.vect) >= n * m)
+  {
+    Pm.vect = Pm.vect[Pm.vect < PGS.limit]
+    Pm.vect = c(Pm.vect, PGS.limit)
+    warning(paste0("The maximum Pm that PGS can afford is n * m = ", n * m,
+                   ". The total number of available genomic marks = ", dim(PS)[1],
+                   ". Your Pm.vect has been truncated to ", paste0(Pm.vect,collapse = " ")))
+  }
+    
+  if (max(Pm.vect) > n.marks)
+  {
+    Pm.vect = Pm.vect[Pm.vect <= n.marks]
+    Pm.vect = c(Pm.vect, n.marks)
+    warning(paste0("The total number of available genomic marks = ", dim(PS)[1],
+                   ". Your Pm.vect has been truncated to ", paste0(Pm.vect,collapse = " "))) 
+  }
+  
+  if(is.null( (PS.Morder = as.character(rownames(PS))) ))
+  {stop("The row names of the pre-ranking results must be the name of genomic marks.")}
+  
   if (is.null(seed)) seed = as.integer(Sys.time())  # Use current time as seed if not specified
   
   if (!is.null(COV))
   {COV <- as.matrix((model.matrix(~.,COV))[,-1])}
-  
-  if(is.null( (PS.Morder = as.character(rownames(PS))) ))
-  {stop("The row names of the pre-ranking results must be the name of genomic marks.")}
   
   M <- as.matrix(M)
   
@@ -63,18 +83,18 @@ PGS<-function(
   
   if (parallel == TRUE)
   {
+    num_cores = detectCores()
+    options(mc.cores = num_cores)
     cat(paste0("Start running PGS with ",detectCores()," cores in parallel...   (",Sys.time(),")\n"))
-    registerDoParallel(cores = detectCores())
-    res_par <- vector("list", L.Pm) 
-    res_par <- foreach(k = 1:length(Pm.vect), .combine = c, .packages=c("PGS")) %dopar%  
-    {        
-      pm<-Pm.vect[k]
-      x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
-      set.seed(seed)
-      res_par[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
-    }
+    res_par <- do.call(c, mclapply(seq_len(L.Pm), function(k) {
+                        pm<-Pm.vect[k]
+                        x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
+                        set.seed(seed)
+                        res_par[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
+                        }
+                      ) )
   }
-  
+
   ## Summarize the results
   for(i in 1:L.Pm)
   {
@@ -98,13 +118,9 @@ PGS<-function(
   se<-sqrt(varb)
   
   sel.names<-c(PS.Morder[1:Pm.vect[best.ind[1]]],conf.names)
-  coefficients<-data.frame(Estimate = beta, Std.err = se, CP.lower = beta - 1.96*se, CP.upper = beta + 1.96*se)
+  coefficients<-data.frame(Estimate = beta, Std.err = se, z = beta / se, P = 2*pnorm(abs(beta / se), lower.tail = F),
+                           CI95.lower = beta - qnorm(0.975)*se, CI95.upper = beta + qnorm(0.975)*se)
   rownames(coefficients) = sel.names
-  
-  coefficients$Sig = rep(0,nrow(coefficients))
-  coefficients$Sig[sign(coefficients$CP.lower) == sign(coefficients$CP.upper)] = 1 
-  
-  coefficients = coefficients[order(coefficients$Sig, abs(coefficients$Estimate),decreasing = T),]
 
   res = list(coefficients = coefficients,
              grid.err = grid.err,
