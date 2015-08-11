@@ -12,7 +12,7 @@ Yinan Zheng, Zhe Fei, Wei Zhang, Justin B. Starren, Lei Liu, Andrea A. Baccarell
 Yi Li, and Lifang Hou: PGS: a tool for association study of high-dimensional microRNA expression data with repeated measures. Bioinformatics 2014. PubMed PMID: 24947752.
 http://www.ncbi.nlm.nih.gov/pubmed/24947752
 
-##Package update log:
+##Package Update Log:
 2015.08.11: PGS package v0.0.2 (pre-release). Improved parallel computing code and output estimation results.
 2015.08.09: PGS package v0.0.1 (pre-release). PGS is now available in R package. The package is written in Rcpp and RcppArmadillo, which is much faster than R.
 
