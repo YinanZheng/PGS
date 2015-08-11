@@ -65,36 +65,31 @@ PGS<-function(
   flag.stop.corr.vect = rep(NA, L.Pm)    # Initiate stop flag 
   alpha.corr.list <- vector("list", L.Pm)  # Initiate correlation matrix       
   est.sigma2.corr.vect <- rep(NA, L.Pm)    
-  ###
   
   if (parallel == FALSE)
   {
-    res_seq <- vector("list", L.Pm) 
-    for (k in 1:L.Pm)
-    {
-      cat(paste0("Start running PGS with single core...   (",Sys.time(),")\n"))
-      pm<-Pm.vect[k]
-      print(paste("Running Top",pm,"marks..."))
-      x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
-      set.seed(seed)
-      res_seq[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
-    } 
+    options(mc.cores = 1)
+    cat(paste0("Start running PGS with single core...   (",Sys.time(),")\n"))
   }
   
   if (parallel == TRUE)
   {
-    num_cores = detectCores()
-    options(mc.cores = num_cores)
+    options(mc.cores = detectCores())
     cat(paste0("Start running PGS with ",detectCores()," cores in parallel...   (",Sys.time(),")\n"))
-    res_par <- do.call(c, mclapply(seq_len(L.Pm), function(k) {
-                        pm<-Pm.vect[k]
-                        x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
-                        set.seed(seed)
-                        res_par[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
-                        }
-                      ) )
   }
 
+  res_par = vector("list", L.Pm)
+  
+  system.time(
+    res_par <- do.call(c, mclapply(seq_len(L.Pm), function(k) {
+    pm<-Pm.vect[k]
+    x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
+    set.seed(seed)
+    res_par[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
+  }
+  ) )
+  )
+  
   ## Summarize the results
   for(i in 1:L.Pm)
   {

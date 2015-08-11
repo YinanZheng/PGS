@@ -35,5 +35,6 @@ plotGrid <- function(pgsobj,colrange = NULL)
     theme(plot.title = element_text(size = rel(1.7))) +
     theme(axis.title = element_text(size = rel(1.5))) +
     theme(axis.text = element_text(size = rel(1.2))) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+    guides(fill=guide_legend(title="CV error"))
 }

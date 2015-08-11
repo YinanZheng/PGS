@@ -5,7 +5,7 @@ prLMM <- function(y.vect, id.vect, M, COV=NULL, parallel=TRUE, write=FALSE)
   if (parallel == TRUE)
   {  
     num_cores <- detectCores()
-    cat(paste0("Running pre-ranking with ", num_cores, " cores in parallel.\n"))
+    cat(paste0("Running pre-ranking with ", num_cores, " cores in parallel...   (",Sys.time(),")\n"))
     options(mc.cores = num_cores)
   } else {
     num_cores <- 1
@@ -51,5 +51,6 @@ prLMM <- function(y.vect, id.vect, M, COV=NULL, parallel=TRUE, write=FALSE)
     write.csv(ps_lmm,"Pre-ranking_LMM.csv")
     cat(paste0("Pre-ranking results using LMM has been saved to ",getwd(),".\n"))
   }
+  cat(paste0("Done!    (",Sys.time(),")\n"))
   return(results)
 }
