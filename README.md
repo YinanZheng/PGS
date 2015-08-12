@@ -4,9 +4,7 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 ##Quick start: install PGS R package (latest version: v0.0.3):
     
     install.packages(c("Rcpp","RcppArmadillo"), type = "source")  # Need these two packages to compile C++ script.
-    
-`Stuck on this step? You may need to installed some prerequisites to work with Rcpp. Click [HERE] for more information`
-    
+
     install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3.tar.gz", repos = NULL, type="source")
                  
 
