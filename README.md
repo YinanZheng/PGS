@@ -3,8 +3,14 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 
 ##Install R package (latest version: v0.0.3):
     
-(Editing)
+    #Check missing dependencies and install if necessary:
+    list.of.dependencies <- c("Rcpp", "doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
+    new.packages <- list.of.dependencies[!(list.of.packages %in% installed.packages()[,"Package"])]
+    if(length(new.packages)) install.packages(new.packages)
 
+    #Install PGS:
+    
+    
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
 
