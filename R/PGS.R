@@ -19,6 +19,9 @@ PGS<-function(
               seed = NULL        #### seed
              )
 {
+  if (sum(is.na(y.vect)) + sum(is.na(id.vect)) + sum(is.na(M)) + sum(is.na(COV)) > 0)
+    stop("Missing value(s) exist. Please make sure your data is complete and each individual have the same number of multiple measures.")
+  
   n.marks = dim(M)[2]
   PGS.limit = min(n * m, n.marks)
   
@@ -66,29 +69,22 @@ PGS<-function(
   alpha.corr.list <- vector("list", L.Pm)  # Initiate correlation matrix       
   est.sigma2.corr.vect <- rep(NA, L.Pm)    
   
-  if (parallel == FALSE)
-  {
-    options(mc.cores = 1)
-    cat(paste0("Start running PGS with single core...   (",Sys.time(),")\n"))
-  }
-  
   if (parallel == TRUE)
-  {
-    options(mc.cores = detectCores())
-    cat(paste0("Start running PGS with ",detectCores()," cores in parallel...   (",Sys.time(),")\n"))
+  {  
+    num_cores <- detectCores()
+    cat(paste0("Start running PGS with ", num_cores, " cores in parallel...   (",Sys.time(),")\n"))
+    if(getDoParWorkers() != num_cores) registerDoParallel(num_cores)
+  } else {
+    num_cores <- 1
+    cat(paste0("Start Running PGS with single core...   (",Sys.time(),")\n"))
+    registerDoSEQ()
   }
 
-  res_par = vector("list", L.Pm)
-  
-  system.time(
-    res_par <- do.call(c, mclapply(seq_len(L.Pm), function(k) {
-    pm<-Pm.vect[k]
-    x.mat<-as.matrix(cbind(M.ps[,1:pm],COV))   # Attach the confounders with the top markers
+  res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
     set.seed(seed)
-    res_par[k] = list(one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str))
+    x.mat<-as.matrix(cbind(M_chunk, COV))
+    one_run_grid_cpp(y.vect, x.mat, id.vect, n, m, ncol(x.mat), fold, lam.vect, rho, eps, eps.stop, max.step, corr_str)
   }
-  ) )
-  )
   
   ## Summarize the results
   for(i in 1:L.Pm)
