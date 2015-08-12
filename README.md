@@ -2,10 +2,8 @@
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
 ##Install PGS R package (latest version: v0.0.3):
-
-    # Open R Session
     
-    install.packages(c("Rcpp","RcppArmadillo"))
+    install.packages(c("Rcpp","RcppArmadillo"))  # Need these two packages to compile C++ script.
     
     install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3.tar.gz", repos = NULL, type="source")
                  
