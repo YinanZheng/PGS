@@ -1,7 +1,7 @@
 Package: PGS
 Type: Package
 Title: Penalized GEE with Grid Search
-Version: 0.0.2
+Version: 0.0.3
 Date: 2015-07-28
 Author: Yinan Zheng
 Maintainer: Yinan Zheng <y-zheng@northwestern.edu>
