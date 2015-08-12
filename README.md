@@ -1,8 +1,10 @@
 #PGS: Penalized GEE with Grid Search
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
-##Install R package (latest version: v0.0.3):
+##Install package (latest version: v0.0.3):
 
+    install.packages(c("Rcpp","RcppArmadillo"))
+    
     install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3.tar.gz", repos = NULL, type="source")
                  
 ##Wiki & Examples:
