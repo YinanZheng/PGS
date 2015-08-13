@@ -2,7 +2,9 @@
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
 ##Install R package (latest version: v0.0.3):
-    
+
+> Run the following code:
+
     #Check missing dependencies and install if necessary:
     list.of.dependencies <- c("Rcpp", "doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
     new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
