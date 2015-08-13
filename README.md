@@ -7,7 +7,7 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 
 _`# Check missing dependencies and install if necessary:`_
 
-    list.of.dependencies <- c("Rcpp", "doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
+    list.of.dependencies <- c("doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
     new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
     if(length(new.packages)) install.packages(new.packages) else cat("Dependencies are ready!\n")
     
