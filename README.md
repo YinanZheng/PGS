@@ -9,7 +9,7 @@ Penalized GEE model for association study of high-dimensional genomic data with 
     if(length(new.packages)) install.packages(new.packages)
 
     #Install PGS:
-    
+    install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS.zip",repos = NULL)
     
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
