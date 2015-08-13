@@ -5,9 +5,9 @@ Penalized GEE model for association study of high-dimensional genomic data with 
     
     #Check missing dependencies and install if necessary:
     list.of.dependencies <- c("Rcpp", "doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
-    new.packages <- list.of.dependencies[!(list.of.packages %in% installed.packages()[,"Package"])]
-    if(length(new.packages)) install.packages(new.packages)
-
+    new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
+    if(length(new.packages)) install.packages(new.packages) else cat("Dependencies are ready!\n")
+    
     #Install PGS:
     install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS.zip",repos = NULL)
     
