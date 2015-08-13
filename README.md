@@ -20,7 +20,6 @@ _`# Install PGS:`_
       
     library(PGS)
     
-    
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
 
