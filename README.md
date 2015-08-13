@@ -14,6 +14,7 @@ _`# Check missing dependencies and install if necessary:`_
 _`# Install PGS:`_
 
     install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS.zip",repos = NULL)
+    library(PGS)
     
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
