@@ -1,9 +1,17 @@
 #PGS: Penalized GEE with Grid Search
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
-##Install PGS R package (For Windows & OS X):
+##Install PGS R package:
 
-> Run the following code:
+> Binary package download:
+
+[PGS for Windows](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_Windows.zip)
+
+[PGS for Mac OSX](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_OSX.tgz)
+
+[PGS for Linux](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_LINUX.tar.gz)
+
+> Run the following code in your R session:
 
 _`# Check missing dependencies and install if necessary:`_
 
@@ -13,11 +21,8 @@ _`# Check missing dependencies and install if necessary:`_
     
 _`# Install PGS:`_
 
-    if (Sys.info()["sysname"] == "Darwin")
-      install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3.tgz", repo = NULL, type = "binary")
-    if (Sys.info()["sysname"] == "Windows")
-      install.packages("https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3.zip", repo = NULL, type = "binary")
-      
+    install.packages("/YOUR PATH/PGS_Version_Platform", repo = NULL)
+
     library(PGS)
     
 ##Wiki & Examples:
