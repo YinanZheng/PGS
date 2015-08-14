@@ -3,20 +3,24 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 
 ##Download PGS R package:
 
-> Binary package download:
-
 [PGS for Windows](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_Windows.zip)
 
 [PGS for Mac OSX](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_OSX.tgz)
 
 [PGS for Linux](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_LINUX.tar.gz)
 
-## Check and Install dependencies
+## Installation
+
+_`First check and install dependencies`_
 
     list.of.dependencies <- c("doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
     new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
     if(length(new.packages)) install.packages(new.packages) else cat("Dependencies are ready!\n")
     
+_`Install PGS`_
+
+    install.packages("[PACKAGE INSTALLATION FILE NAME]", repo = NULL)
+
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
 
