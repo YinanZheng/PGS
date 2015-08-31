@@ -1,4 +1,4 @@
-preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), parallel=TRUE, write=FALSE)
+preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), parallel=TRUE, ncore = detectCores(), write=FALSE)
 {
   if (length(method)>1) method = "LMM"  # By default the model is LMM
   else if (!method %in% c("LMM","GEE")) stop("The method should be 'LMM' or 'GEE'")
@@ -56,16 +56,14 @@ preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), paral
 
   if (parallel == TRUE)
   {  
-    num_cores <- detectCores()
-    cat(paste0("Running pre-ranking with ", num_cores, " cores in parallel...   (",Sys.time(),")\n"))
-    if(getDoParWorkers() != num_cores) registerDoParallel(num_cores)
+    cat(paste0("Running pre-ranking with ", ncore, " cores in parallel...   (",Sys.time(),")\n"))
+    if(getDoParWorkers() != ncore) registerDoParallel(ncore)
   } else {
-    num_cores <- 1
     cat(paste0("Running pre-ranking with single core...   (",Sys.time(),")\n"))
     registerDoSEQ()
   }
   
-  results <- foreach(n = idiv(L.M, chunks = num_cores), M_chunk = iblkcol_lag(M, chunks = num_cores),.combine = 'rbind', .packages = c('lme4',"geepack")) %dopar% {
+  results <- foreach(n = idiv(L.M, chunks = ncore), M_chunk = iblkcol_lag(M, chunks = ncore),.combine = 'rbind', .packages = c('lme4',"geepack")) %dopar% {
     do.call('rbind',lapply( seq_len(n), doOne, datarun, M_chunk) )
   }
   results = data.frame(results)

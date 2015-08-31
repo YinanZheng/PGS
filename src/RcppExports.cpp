@@ -7,106 +7,56 @@
 
 using namespace Rcpp;
 
-// q_scad_cpp
-vec q_scad_cpp(vec theta, double lambda, double a);
-RcppExport SEXP PGS_q_scad_cpp(SEXP thetaSEXP, SEXP lambdaSEXP, SEXP aSEXP) {
+// countRep_cpp
+vec countRep_cpp(vec id);
+RcppExport SEXP PGS_countRep_cpp(SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type a(aSEXP);
-    __result = Rcpp::wrap(q_scad_cpp(theta, lambda, a));
+    Rcpp::traits::input_parameter< vec >::type id(idSEXP);
+    __result = Rcpp::wrap(countRep_cpp(id));
     return __result;
 END_RCPP
 }
-// S_H_E_normal_cpp
-List S_H_E_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R, vec beta_val, int n, int m, double lam, double eps);
-RcppExport SEXP PGS_S_H_E_normal_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP hat_RSEXP, SEXP beta_valSEXP, SEXP nSEXP, SEXP mSEXP, SEXP lamSEXP, SEXP epsSEXP) {
+// indGen_cpp
+List indGen_cpp(vec id_vect);
+RcppExport SEXP PGS_indGen_cpp(SEXP id_vectSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
     Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type hat_R(hat_RSEXP);
-    Rcpp::traits::input_parameter< vec >::type beta_val(beta_valSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< double >::type lam(lamSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    __result = Rcpp::wrap(S_H_E_normal_cpp(y_vect, x_mat, id_vect, hat_R, beta_val, n, m, lam, eps));
+    __result = Rcpp::wrap(indGen_cpp(id_vect));
     return __result;
 END_RCPP
 }
-// beta_shrink_normal_cpp
-List beta_shrink_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R, vec beta_ini, int n, int m, double lam, double eps, int eps_stop, int max_step);
-RcppExport SEXP PGS_beta_shrink_normal_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP hat_RSEXP, SEXP beta_iniSEXP, SEXP nSEXP, SEXP mSEXP, SEXP lamSEXP, SEXP epsSEXP, SEXP eps_stopSEXP, SEXP max_stepSEXP) {
+// seqJoin_vec
+uvec seqJoin_vec(uvec seq1, uvec seq2, vec m);
+RcppExport SEXP PGS_seqJoin_vec(SEXP seq1SEXP, SEXP seq2SEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
-    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type hat_R(hat_RSEXP);
-    Rcpp::traits::input_parameter< vec >::type beta_ini(beta_iniSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< double >::type lam(lamSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type eps_stop(eps_stopSEXP);
-    Rcpp::traits::input_parameter< int >::type max_step(max_stepSEXP);
-    __result = Rcpp::wrap(beta_shrink_normal_cpp(y_vect, x_mat, id_vect, hat_R, beta_ini, n, m, lam, eps, eps_stop, max_step));
+    Rcpp::traits::input_parameter< uvec >::type seq1(seq1SEXP);
+    Rcpp::traits::input_parameter< uvec >::type seq2(seq2SEXP);
+    Rcpp::traits::input_parameter< vec >::type m(mSEXP);
+    __result = Rcpp::wrap(seqJoin_vec(seq1, seq2, m));
     return __result;
 END_RCPP
 }
-// CV_lam_grid_cpp
-List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R, vec beta_ini, int n, int m, int fold, vec lam_vect, double eps, int eps_stop, int max_step);
-RcppExport SEXP PGS_CV_lam_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP hat_RSEXP, SEXP beta_iniSEXP, SEXP nSEXP, SEXP mSEXP, SEXP foldSEXP, SEXP lam_vectSEXP, SEXP epsSEXP, SEXP eps_stopSEXP, SEXP max_stepSEXP) {
+// seqJoin_int
+uvec seqJoin_int(uvec seq, int m);
+RcppExport SEXP PGS_seqJoin_int(SEXP seqSEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
-    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type hat_R(hat_RSEXP);
-    Rcpp::traits::input_parameter< vec >::type beta_ini(beta_iniSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< uvec >::type seq(seqSEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< int >::type fold(foldSEXP);
-    Rcpp::traits::input_parameter< vec >::type lam_vect(lam_vectSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type eps_stop(eps_stopSEXP);
-    Rcpp::traits::input_parameter< int >::type max_step(max_stepSEXP);
-    __result = Rcpp::wrap(CV_lam_grid_cpp(y_vect, x_mat, id_vect, hat_R, beta_ini, n, m, fold, lam_vect, eps, eps_stop, max_step));
-    return __result;
-END_RCPP
-}
-// est_pgee_grid_cpp
-List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R, vec beta_ini, int n, int m, int fold, vec lam_vect, double eps, int eps_stop, int max_step);
-RcppExport SEXP PGS_est_pgee_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP hat_RSEXP, SEXP beta_iniSEXP, SEXP nSEXP, SEXP mSEXP, SEXP foldSEXP, SEXP lam_vectSEXP, SEXP epsSEXP, SEXP eps_stopSEXP, SEXP max_stepSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
-    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type hat_R(hat_RSEXP);
-    Rcpp::traits::input_parameter< vec >::type beta_ini(beta_iniSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< int >::type fold(foldSEXP);
-    Rcpp::traits::input_parameter< vec >::type lam_vect(lam_vectSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type eps_stop(eps_stopSEXP);
-    Rcpp::traits::input_parameter< int >::type max_step(max_stepSEXP);
-    __result = Rcpp::wrap(est_pgee_grid_cpp(y_vect, x_mat, id_vect, hat_R, beta_ini, n, m, fold, lam_vect, eps, eps_stop, max_step));
+    __result = Rcpp::wrap(seqJoin_int(seq, m));
     return __result;
 END_RCPP
 }
 // corr_est_normal_cpp
-mat corr_est_normal_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_val, int n, int m, std::string corr_str);
-RcppExport SEXP PGS_corr_est_normal_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP beta_valSEXP, SEXP nSEXP, SEXP mSEXP, SEXP corr_strSEXP) {
+mat corr_est_normal_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_val, int p, std::string corr_str);
+RcppExport SEXP PGS_corr_est_normal_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP beta_valSEXP, SEXP pSEXP, SEXP corr_strSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -114,33 +64,48 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
     Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
     Rcpp::traits::input_parameter< vec >::type beta_val(beta_valSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
     Rcpp::traits::input_parameter< std::string >::type corr_str(corr_strSEXP);
-    __result = Rcpp::wrap(corr_est_normal_cpp(y_vect, x_mat, id_vect, beta_val, n, m, corr_str));
+    __result = Rcpp::wrap(corr_est_normal_cpp(y_vect, x_mat, id_vect, beta_val, p, corr_str));
     return __result;
 END_RCPP
 }
-// one_run_grid_cpp
-List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, int n, int m, int pn, int fold, vec lam_vect, double rho, double eps, int eps_stop, int max_step, std::string corr_str);
-RcppExport SEXP PGS_one_run_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP nSEXP, SEXP mSEXP, SEXP pnSEXP, SEXP foldSEXP, SEXP lam_vectSEXP, SEXP rhoSEXP, SEXP epsSEXP, SEXP eps_stopSEXP, SEXP max_stepSEXP, SEXP corr_strSEXP) {
+// est_pgee_grid_cpp
+List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str);
+RcppExport SEXP PGS_est_pgee_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP beta_hat_RSEXP, SEXP foldSEXP, SEXP pSEXP, SEXP lam_vectSEXP, SEXP eps_stopSEXP, SEXP iter_trySEXP, SEXP corr_strSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
     Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
     Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< int >::type pn(pnSEXP);
+    Rcpp::traits::input_parameter< vec >::type beta_hat_R(beta_hat_RSEXP);
     Rcpp::traits::input_parameter< int >::type fold(foldSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
     Rcpp::traits::input_parameter< vec >::type lam_vect(lam_vectSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type eps_stop(eps_stopSEXP);
-    Rcpp::traits::input_parameter< int >::type max_step(max_stepSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_stop(eps_stopSEXP);
+    Rcpp::traits::input_parameter< int >::type iter_try(iter_trySEXP);
     Rcpp::traits::input_parameter< std::string >::type corr_str(corr_strSEXP);
-    __result = Rcpp::wrap(one_run_grid_cpp(y_vect, x_mat, id_vect, n, m, pn, fold, lam_vect, rho, eps, eps_stop, max_step, corr_str));
+    __result = Rcpp::wrap(est_pgee_grid_cpp(y_vect, x_mat, id_vect, beta_hat_R, fold, p, lam_vect, eps_stop, iter_try, corr_str));
+    return __result;
+END_RCPP
+}
+// one_run_grid_cpp
+List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str);
+RcppExport SEXP PGS_one_run_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP foldSEXP, SEXP pSEXP, SEXP lam_vectSEXP, SEXP eps_stopSEXP, SEXP iter_trySEXP, SEXP corr_strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
+    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
+    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
+    Rcpp::traits::input_parameter< int >::type fold(foldSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< vec >::type lam_vect(lam_vectSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_stop(eps_stopSEXP);
+    Rcpp::traits::input_parameter< int >::type iter_try(iter_trySEXP);
+    Rcpp::traits::input_parameter< std::string >::type corr_str(corr_strSEXP);
+    __result = Rcpp::wrap(one_run_grid_cpp(y_vect, x_mat, id_vect, fold, p, lam_vect, eps_stop, iter_try, corr_str));
     return __result;
 END_RCPP
 }
