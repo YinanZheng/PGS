@@ -56,6 +56,11 @@ preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), paral
 
   if (parallel == TRUE)
   {  
+    if(ncore > detectCores())
+    {
+      warning(paste0("You requested ", ncore, " cores. There are only ", detectCores()," in your machine!"))
+      ncore = detectCores()
+    }
     cat(paste0("Running pre-ranking with ", ncore, " cores in parallel...   (",Sys.time(),")\n"))
     if(getDoParWorkers() != ncore) registerDoParallel(ncore)
   } else {
