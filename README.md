@@ -2,13 +2,9 @@
 
 Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
 
-##Download PGS R package (pre-release):
+##Download PGS R package:
 
-[PGS for Windows](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_Windows.zip)
-
-[PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_OSX.tgz)
-
-[PGS for Linux](https://github.com/YinanZheng/PGS/releases/download/PGS_v0.0.3/PGS_0.0.3_Linux.tar.gz)
+[PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.0/PGS_0.1.0_OSX.tgz)
 
 ## Installation in R session
 
