@@ -1,6 +1,6 @@
 #PGS: Penalized GEE with Grid Search
 
-Penalized GEE model for association study of high-dimensional genomic data with repeated (>=2) measures. 
+Penalized GEE model for association study of high-dimensional genomic data. 
 
 ##Download PGS R package:
 
