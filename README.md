@@ -8,6 +8,8 @@ Penalized GEE model for association study of high-dimensional genomic data with 
 
 [PGS for Windows(32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.0/PGS_0.1.0_Windows.zip)
 
+[PGS for Linux](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.0/PGS_0.1.0_Linux.tar.gz)
+
 ## Installation in R session
 
 _`# First check and install dependencies:`_
