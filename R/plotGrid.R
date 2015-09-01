@@ -14,14 +14,12 @@ plotGrid <- function(pgsobj,colrange = NULL)
   
   grid.err = pgsobj$grid.err
   best.ind=which(grid.err==min(grid.err),arr.ind=T)         # Locate the smallest error in grid
-  
-  # grid.err = data.frame(Pm=rownames(grid.err),grid.err,check.names = F)
-  grid.err.m = melt(grid.err,id.vars = rownames(grid.err))
+  grid.err.m = melt(grid.err,id.vars = pgsobj$Pm.vect)
   colnames(grid.err.m) = c("Pm","Lambda","value")
   grid.err.m$Pm <- factor(grid.err.m$Pm,levels = unique(grid.err.m$Pm))
   grid.err.m$Lambda <- factor(grid.err.m$Lambda, levels = unique(grid.err.m$Lambda))
   grid.err.m$small <- ""
-  grid.err.m$small[(apply(grid.err,1,which.min)-1) * length(Pm.vect) + 1:length(Pm.vect) ] <- "+"
+  grid.err.m$small[(apply(grid.err,1,which.min)-1) * length(pgsobj$Pm.vect) + 1:length(pgsobj$Pm.vect) ] <- "+"
   grid.err.m$plus <- ""
   grid.err.m$plus[which.min(grid.err.m$value)] <- "+"
   
