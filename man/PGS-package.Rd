@@ -9,13 +9,13 @@
 \packageDescription{PGS}
 }
 \details{
-\code{BJdata} is used to load and preview PGS built-in example datasets \code{BJmirna} and \code{BJlung}.
+\code{\link{BJdata}} is used to load and preview PGS built-in example datasets \code{BJmirna} and \code{BJlung}.
 
-\code{pgsfit} is used to fit and determine the best results from penalized GEE method across pre-specified tunning parameter grid.
+\code{\link{pgsfit}} is used to fit and determine the best results from penalized GEE method across pre-specified tunning parameter grid.
 
-\code{plotGrid} is used to visualize the cross-validation (CV) error grid using a heat map.
+\code{\link{plotGrid}} is used to visualize the cross-validation (CV) error grid using a heat map.
 
-\code{preRank} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by coefficients or statistics.
+\code{\link{preRank}} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by coefficients or statistics.
 }
 \author{
 \packageAuthor{PGS}
