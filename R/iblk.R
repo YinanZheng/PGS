@@ -1,4 +1,4 @@
-## Create iterator for bulk matrix by column
+## Create iterator for bulk matrix by column (internal function)
 
 iblkcol_lag <- function(M, ...) {
   i <- 1

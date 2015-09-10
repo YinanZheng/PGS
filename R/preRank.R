@@ -1,8 +1,65 @@
-preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), parallel=TRUE, ncore = detectCores(), write=FALSE)
+#' Site-by-site Independent Pre-ranking for Genomic marks
+#' 
+#' \code{preRank} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by coefficients or statistics.
+#' 
+#' @param y.vect a vector of dependent variable.
+#' @param id.vect a vector of subjuect ID.
+#' @param M a data frame or matrix of genomic dataset. Rows represent samples, columns represent genomic marks.
+#' @param COV a data frame or matrix of covariates dataset.
+#' @param method a character string specifying fitting method. Linear mixed-effect model (\code{"LMM"}) and generalized estimation equation (\code{"GEE"}) method are supported. Default = \code{"LMM"}.
+#' @param rankby a character string specifying how the geneomic marks should be ranked. They can be ranked by either their absolute value of coefficients (\code{"coef"}), or their statistics (t-statistics or Z-statistics) (\code{"stat"}). Default = \code{"coef"}.
+#' @param parallel logical. Enable parallel computing feature? Default = \code{TRUE}.
+#' @param ncore number of cores to run parallel. Effective when paralle = \code{TRUE}. By default, max number of cores will be used.
+#' @param write logical. Export ranking results to csv file in the working directory if \code{TRUE}. Defaul = \code{FALSE}.
+#' 
+#' @return A vector of ranked genomic marks.
+#' 
+#' @seealso see \code{\link{pgsfit}} using the results from \code{preRank} as input to run PGS.
+#'
+#' @examples
+#' ### Dataset preview
+#' BJdata()
+#'
+#' ### Convert binary variables into factor type. 
+#' BJlung$gender = factor(BJlung$gender)
+#' BJlung$heat = factor(BJlung$heat)
+#' BJlung$cigwear = factor(BJlung$cigwear)
+#' 
+#' ### Merge miRNA and lung function dataset.
+#' BJdata <- merge(BJmirna, BJlung, by=c("SID","WD"))
+#' 
+#' ### Data must be sorted by study subject ID and multiple measurements indicator.
+#' BJdata <- BJdata[with(BJdata, order(SID, WD)), ]
+#' 
+#' ### Extract dependent variable (lung function)
+#' y.vect<-BJdata$FEV1
+#' 
+#' ### Extract subjuect ID variable indicating repeated measures.             
+#' id.vect<-BJdata$SID        
+#' 
+#' ### Extract microRNA data matrix.    
+#' M<-BJdata[,3:168]   
+#' 
+#' ### Extract covariate data matrix.          
+#' COV<-BJdata[,170:179]
+#'            
+#' ### LMM site-by-site pre-ranking results.
+#' prerank_LMM_par = preRank(y.vect, id.vect, M, COV, method = "LMM")
+
+#' ### GEE site-by-site pre-ranking results.
+#' prerank_GEE_par = preRank(y.vect, id.vect, M, COV, method = "GEE")
+
+#' ### Save the details in csv file
+#' prerank_LMM_par = preRank(y.vect, id.vect, M, COV, method = "LMM", write = T)
+
+preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), rankby = c("coef","p"), parallel=TRUE, ncore = detectCores(), write=FALSE)
 {
   if (length(method)>1) method = "LMM"  # By default the model is LMM
-  else if (!method %in% c("LMM","GEE")) stop("The method should be 'LMM' or 'GEE'")
+  else if (!method %in% c("LMM","GEE")) stop("The method should be either 'LMM' (linear mixed-effect model) or 'GEE' (generalized estimation equation).")
    
+  if (length(rankby)>1) rankby = "coef"  # By default the results are ranked by absolute value of coefficient (beta)
+  else if (!rankby %in% c("coef","stat")) stop("The results can be ranked by either 'coef' (absolute value of coefficient) or 'stat' (absolute value of statistics).")
+  
   M.names = colnames(M) 
   L.M = dim(M)[2]
   
@@ -20,7 +77,7 @@ preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), paral
     modelstatement_GEE = eval(parse(text=(paste0("y.vect ~ Mone +", paste0(paste0("COV.",conf.names),collapse = "+")))))
   }
   
-  if ((method == "LMM")[1])
+  if (method == "LMM")
   {
     cat("Model: LMM\n")
     modelstatement = modelstatement_LMM
@@ -37,7 +94,7 @@ preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), paral
     }
   }
   
-  if ((method == "GEE")[1])
+  if (method == "GEE")
   {
     cat("Model: GEE\n")
     modelstatement = modelstatement_GEE
@@ -78,13 +135,15 @@ preRank <- function(y.vect, id.vect, M, COV=NULL, method = c("LMM","GEE"), paral
   results$p.value = 2*(1-pnorm(abs(results$Stat)))
   results$BH.FDR=p.adjust(results$p.value,"fdr")              # calculate Benjamini and Hochberg FDR
   results$Bonferroni=p.adjust(results$p.value,"bonferroni")   # calculate Bonferroni adjusted p-value
-  results = results[order(results$p.value),]
+  
+  if (rankby == "coef") results = results[order(abs(results$Estimate), decreasing = TRUE), ]
+  if (rankby == "stat") results = results[order(abs(results$Stat), decreasing = TRUE), ]
 
   if (write == TRUE)
   {
     write.csv(results,paste0("Pre-ranking_",method,".csv"))
-    cat(paste0("Pre-ranking results using ",method, " has been saved to ",getwd(),"   (",Sys.time(),")\n"))
+    cat(paste0("Pre-ranking results using ",method, ", ranked by ", rankby,", has been saved to ",getwd(),"   (",Sys.time(),")\n"))
   }
   cat(paste0("Done!    (",Sys.time(),")\n"))
-  return(results)
+  return(rownames(results))
 }

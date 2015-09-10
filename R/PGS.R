@@ -1,19 +1,89 @@
-PGS<-function(
-              y.vect,                #### Dependent variable vector
-              id.vect,               #### Subjuect id variable
-              M,                     #### Genomic data (each row represents samples, each column represents genomic marks)
-              COV = NULL,            #### Covariates data
-              preRank.vect,	         #### Preranking names of genomic marks. 1st marks is the most important and last marks is the least important.
-              Pm.vect,               #### Pm vector, a vector of the number of top ranking genomic makrs	       
-              lam.vect,              #### lambda vector, a vector of PGEE penalty parameter
-              fold = 10,             #### k-fold cross-validation for calculating grid error. By default k=10
-              eps = 10^-5,           #### Convergence threshold. By default iteration stops when estimation changes <10^-5
-              iter.n = 50,           #### Maximum iternation number.
-              corstr = "ar1",        #### Specify the working correlation structure
-              parallel = TRUE,       #### parallel computing model
-              ncore = detectCores(), #### number of cores to run parallel when paralle = TRUE. By default max number of cores will be used.
-              seed = NULL            #### set seed number. If not specified PGS will generate one.
-             )
+#' Penalized Generalized Estimation Equation with Grid Search
+#' 
+#' \code{pgsfit} is used to fit and determine the best results from penalized GEE method across pre-specified tunning parameter grid.
+#' 
+#' @param y.vect a vector of dependent variable.
+#' @param id.vect a vector of subjuect ID.
+#' @param M a data frame or matrix of genomic dataset. Rows represent samples, columns represent genomic marks.
+#' @param COV a data frame or matrix of covariates dataset.
+#' @param preRank.vect a vector of strings specifying pre-ranked names of genomic marks. see \code{preRank}.
+#' @param Pm.vect a numeric vector of tunning parameter Pm, which specifies the number of top ranking genomic marks.       
+#' @param lam.vect a numeric vector of tunning parameter lambda, which specifies the penalty parameter.
+#' @param fold k-fold cross-validation in calculating grid error. Default = 10.
+#' @param eps convergence threshold. By default iteration stops when beta estimation error <1e-5
+#' @param iter.n maximum iteration number. Iteration will stop anyway even if the \code{eps} is not met. Default = 50.
+#' @param corstr a character string specifying the working correlation structure. The following are permitted: independence (\code{"indep"}), exchangeable (\code{"exch"}), autoregressive(1) (\code{"ar1"}), and unstructured (\code{"un"}). Default = \code{"ar1"}.
+#' @param parallel logical. enable parallel computing feature? Default = \code{TRUE}.
+#' @param ncore number of cores to run parallel computation. Effective when \code{parallel} = \code{TRUE}. By default, max number of cores will be used.
+#' @param seed an integer specifying seed for cross-validation. If not specified \code{pgsfit} will generate one.
+#' 
+#' @return Fitting and variable penalization results; a list object \code{pgsobj} consisting of:
+#'   \item{coefficients}{estimates (shrinked) from the best model}
+#'   \item{grid.err}{cross-validation error grid}
+#'   \item{lam.sel.vect}{vector of selected lambda}
+#'   \item{flag.stop.corr}{estimation error when iteration stop}
+#'   \item{iter.n.corr}{iteration times}
+#'   \item{Pm.vect}{working vector of tunning parameter Pm}
+#'   \item{lam.vect}{working vector of tunning parameter lambda}
+#' 
+#' @seealso see \code{\link{preRank}} to obtain proper ranked genomic marks. see \code{\link{plotGrid}} to visualize and diagnose fitting results.
+#' 
+#' @examples
+#' ### Dataset preview
+#' BJdata()
+#'
+#' ### Convert binary variables into factor type. 
+#' BJlung$gender = factor(BJlung$gender)
+#' BJlung$heat = factor(BJlung$heat)
+#' BJlung$cigwear = factor(BJlung$cigwear)
+#' 
+#' ### Merge miRNA and lung function dataset.
+#' BJdata <- merge(BJmirna, BJlung, by=c("SID","WD"))
+#' 
+#' ### Data must be sorted by study subject ID and multiple measurements indicator.
+#' BJdata <- BJdata[with(BJdata, order(SID, WD)), ]
+#' 
+#' ### Extract dependent variable (lung function)
+#' y.vect<-BJdata$FEV1
+#' 
+#' ### Extract subjuect ID variable indicating repeated measures.             
+#' id.vect<-BJdata$SID        
+#' 
+#' ### Extract microRNA data matrix.    
+#' M<-BJdata[,3:168]   
+#' 
+#' ### Extract covariate data matrix.          
+#' COV<-BJdata[,170:179]
+#'            
+#' ### In the example we use linear mixed-effect model (default) for pre-ranking, ranked by absolute value of coefficients (default).
+#' prerank_LMM_par = preRank(y.vect, id.vect, M, COV)
+#' preRank.vect = prerank_LMM_par
+#' 
+#' ### Initiate Pm sequence: Number of top ranking genomic marks.
+#' (Pm.vect<-c(seq(10,160,10)))
+#' 
+#' ### Initiate lambda sequence: Penalty parameter.
+#' (lam.vect<-seq(0.02, 0.3, 0.02))      
+#' 
+#' ### If your computer have multiple cores, it is recommended to enable parallel option (default).
+#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+
+pgsfit<-function(
+                  y.vect,                
+                  id.vect,               
+                  M,                     
+                  COV = NULL,            
+                  preRank.vect,	         
+                  Pm.vect,               
+                  lam.vect,              
+                  fold = 10,             
+                  eps = 1e-5,           
+                  iter.n = 50,          
+                  corstr = "ar1",        
+                  parallel = TRUE,       
+                  ncore = detectCores(), 
+                  seed = NULL
+                )
 {
   cat("Missing value check...\n")
   component_list = c("Dependent variable", "Genomic data matrix", "Covaraites")
@@ -29,12 +99,10 @@ PGS<-function(
   id.vect = sort(as.numeric(as.factor(as.character(id.vect))))
   indGen_res = indGen_cpp(id.vect)
   
-  if (!is.null(COV))
-  {
-    COV <- as.matrix((model.matrix(~.,COV))[,-1])
-  }
+  if (!is.null(COV)) COV <- as.matrix((model.matrix(~.,COV))[,-1])
+  if (is.null(seed)) seed = round(as.numeric(Sys.time()))
   
-  cat(paste0("The complete working dataset contains ", indGen_res$n, " individuals and a total of ", indGen_res$obs_n, " observations. \n"))
+  cat(paste0("The complete working dataset contains ", indGen_res$n, " individuals and a total of ", indGen_res$obs_n, " observations. (seed = ", seed,")\n"))
 
   L.Pm = length(Pm.vect)
   L.lam = length(lam.vect)
@@ -98,7 +166,7 @@ PGS<-function(
   rownames(grid.err) <- Pm.vect  
   colnames(grid.err) <- lam.vect
   
-  best.ind<-which(grid.err==min(grid.err),arr.ind=T)
+  best.ind<-which(grid.err==min(grid.err), arr.ind=T)
 
   beta<-beta.shrink.corr.list[[ best.ind[1] ]]
   varb<-var.sand.corr.list[[ best.ind[1] ]]
@@ -118,7 +186,7 @@ PGS<-function(
              lam.vect = lam.vect)
   
   cat(paste0("Done!    (",Sys.time(),")\n"))
-  cat(paste0(">>> The best selection results achieved using top ",Pm.vect[best.ind[1]]," biomarkers with lambda = ",lam.vect[best.ind[2]]),"\n")
+  cat(paste0(">>> The best selection results achieved using top ",Pm.vect[best.ind[1]]," marks with lambda = ",lam.vect[best.ind[2]]),"\n")
   
   return(res)
 }

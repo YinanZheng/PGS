@@ -1,4 +1,15 @@
-# Visualize the Grid Search results with heat plot
+#' Visualize the Cross-Validation Error Grid with Heat Map
+#' 
+#' \code{plotGrid} is used to visualize the cross-validation (CV) error grid using a heat map.
+#' 
+#' @param pgsobj a \code{pgsfit} object.
+#' @param colrange a vector of color strings specifying the color range for heat map. The first color will be used for the lowest CV error; the second color will be used for the highest CV error. If not specified, \code{plotGrid} will generate dark to light purple color scheme by default.
+#'
+#' @seealso see \code{\link{pgsfit}} to run PGS and obtain \code{pgsobj} object.
+#' 
+#' @examples
+#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+#' plotGrid(PGSfit)
 
 plotGrid <- function(pgsobj,colrange = NULL)
 {
