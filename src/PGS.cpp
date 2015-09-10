@@ -206,7 +206,8 @@ List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int f
                       Named("var.sand") = as<vec>(beta_fit[1]),
                       Named("flag.stop") = as<double>(beta_fit[2]),
                       Named("iter.n") = as<double>(beta_fit[3]),
-                      Named("est.sigma2") = as<double>(beta_fit[4])
+                      Named("est.sigma2") = as<double>(beta_fit[4]),
+                      Named("hat.R") = hat_R_full
                      );
 }
 
@@ -234,7 +235,8 @@ List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, int fold, int p, vec l
                       Named("var.sand.cor") = as<vec>(beta_fit_corr[5]),
                       Named("flag.stop.cor") = as<double>(beta_fit_corr[6]),
                       Named("iter.n.cor") = as<double>(beta_fit_corr[7]),
-                      Named("est.sigma2.cor") = as<double>(beta_fit_corr[8])
+                      Named("est.sigma2.cor") = as<double>(beta_fit_corr[8]),
+                      Named("hat.R") = as<mat>(beta_fit_corr[9])
                     );
 }
 

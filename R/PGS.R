@@ -127,8 +127,9 @@ pgsfit<-function(
   lam.sel.vect = rep(NA, L.Pm)  # Initiate optimized lambda for each Pm
   beta.shrink.corr.list = vector("list", L.Pm)   # Initiate penalized Beta (coefficient) estimates for each Pm
   var.sand.corr.list = vector("list", L.Pm)  # Initiate Variance 
-  flag.stop.corr.vect = rep(NA, L.Pm)
-  iter.n.corr.vect = rep(NA, L.Pm)
+  flag.stop.corr.vect = rep(NA, L.Pm) # Initiate stop flag
+  iter.n.corr.vect = rep(NA, L.Pm) # Initiate iteration time
+  hat.R.list = vector("list", L.Pm) # Initiate working correlation matrix
 
   if (parallel == TRUE)
   { 
@@ -161,6 +162,7 @@ pgsfit<-function(
     var.sand.corr.list[[i]] <- temp.run$var.sand.cor
     flag.stop.corr.vect[i] <- temp.run$flag.stop.cor
     iter.n.corr.vect[i] <- temp.run$iter.n.cor
+    hat.R.list[[i]] <- temp.run$hat.R
   }
   
   rownames(grid.err) <- Pm.vect  
@@ -182,6 +184,7 @@ pgsfit<-function(
              lam.sel.vect = lam.sel.vect,
              flag.stop.corr = flag.stop.corr.vect[best.ind[1]],
              iter.n.corr = iter.n.corr.vect[best.ind[1]],
+             hat.R.corr = hat.R.list[[ best.ind[1] ]],
              Pm.vect = Pm.vect,
              lam.vect = lam.vect)
   

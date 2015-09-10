@@ -7,17 +7,6 @@
 
 using namespace Rcpp;
 
-// countRep_cpp
-vec countRep_cpp(vec id);
-RcppExport SEXP PGS_countRep_cpp(SEXP idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type id(idSEXP);
-    __result = Rcpp::wrap(countRep_cpp(id));
-    return __result;
-END_RCPP
-}
 // indGen_cpp
 List indGen_cpp(vec id_vect);
 RcppExport SEXP PGS_indGen_cpp(SEXP id_vectSEXP) {
@@ -26,47 +15,6 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
     __result = Rcpp::wrap(indGen_cpp(id_vect));
-    return __result;
-END_RCPP
-}
-// seqJoin_vec
-uvec seqJoin_vec(uvec seq1, uvec seq2, vec m);
-RcppExport SEXP PGS_seqJoin_vec(SEXP seq1SEXP, SEXP seq2SEXP, SEXP mSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< uvec >::type seq1(seq1SEXP);
-    Rcpp::traits::input_parameter< uvec >::type seq2(seq2SEXP);
-    Rcpp::traits::input_parameter< vec >::type m(mSEXP);
-    __result = Rcpp::wrap(seqJoin_vec(seq1, seq2, m));
-    return __result;
-END_RCPP
-}
-// seqJoin_int
-uvec seqJoin_int(uvec seq, int m);
-RcppExport SEXP PGS_seqJoin_int(SEXP seqSEXP, SEXP mSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< uvec >::type seq(seqSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    __result = Rcpp::wrap(seqJoin_int(seq, m));
-    return __result;
-END_RCPP
-}
-// corr_est_normal_cpp
-mat corr_est_normal_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_val, int p, std::string corr_str);
-RcppExport SEXP PGS_corr_est_normal_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP beta_valSEXP, SEXP pSEXP, SEXP corr_strSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type y_vect(y_vectSEXP);
-    Rcpp::traits::input_parameter< mat >::type x_mat(x_matSEXP);
-    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    Rcpp::traits::input_parameter< vec >::type beta_val(beta_valSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< std::string >::type corr_str(corr_strSEXP);
-    __result = Rcpp::wrap(corr_est_normal_cpp(y_vect, x_mat, id_vect, beta_val, p, corr_str));
     return __result;
 END_RCPP
 }

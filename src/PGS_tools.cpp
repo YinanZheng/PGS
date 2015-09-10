@@ -6,7 +6,6 @@ using namespace Rcpp;
 
 //-----------------------------------------------------
 // Count frequencies of array element
-// [[Rcpp::export]]
 vec countRep_cpp(vec id){
   
   int id_len = id.n_elem;
@@ -54,7 +53,6 @@ List indGen_cpp(vec id_vect){
 
 //-----------------------------------------------------
 // Join sequence of elements of two vector:  m is a vector (for unsorted seq)
-// [[Rcpp::export]]
 uvec seqJoin_vec(uvec seq1, uvec seq2, vec m){
   
   int seq_len = seq1.n_elem;
@@ -74,7 +72,6 @@ uvec seqJoin_vec(uvec seq1, uvec seq2, vec m){
 
 //-----------------------------------------------------
 // Join sequence of elements of two vector: m is an integer (for sorted seq)
-// [[Rcpp::export]]
 uvec seqJoin_int(uvec seq, int m){
   
   uvec seq1 = seq;
@@ -89,7 +86,6 @@ uvec seqJoin_int(uvec seq, int m){
 
 //-----------------------------------------------------
 // Estimate working correlation matrix
-// [[Rcpp::export]]
 mat corr_est_normal_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_val, int p, std::string corr_str){
   
   //Extract sorted index information 
@@ -217,12 +213,5 @@ mat corr_est_normal_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_val, int p,
     hat_R.diag() = ones;
   }
   
-  //   return List::create(
-  //     Named("repm_cum") = repm_cum,
-  //     Named("repm_n") = repm_n,
-  //     Named("repm_seq") = repm_seq,
-  //     Named("div") = div,
-  //     Named("hat_R") = hat_R
-  //   );
   return(hat_R);
 }
