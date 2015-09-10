@@ -6,9 +6,9 @@ Penalized GEE model for association study of high-dimensional genomic data.
 
 [PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.1/PGS_0.1.1.tgz)
 
-[PGS for Windows(32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.1/PGS_0.1.1.zip)
+[PGS for Windows (32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.1/PGS_0.1.1.zip)
 
-[PGS for Linux(86/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.1/PGS_0.1.1.tar.gz)
+[PGS for Linux (86/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.1/PGS_0.1.1.tar.gz)
 
 ## Installation in R session
 
@@ -20,7 +20,9 @@ _`# First check and install dependencies:`_
     
 _`# Install PGS:`_
 
-    install.packages("[PACKAGE INSTALLATION FILE NAME]", repo = NULL)
+    install.packages("PGS_0.1.1.tgz", repo = NULL) # Mac OS X
+    install.packages("PGS_0.1.1.zip", repo = NULL) # Windows
+    install.packages("PGS_0.1.1.tar.gz", repo = NULL) # Linux
 
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
