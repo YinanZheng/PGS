@@ -15,7 +15,7 @@
 
 \code{\link{plotGrid}} is used to visualize the cross-validation (CV) error grid using a heat map.
 
-\code{\link{preRank}} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by coefficients or statistics.
+\code{\link{preRank}} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by p-values.
 }
 \author{
 \packageAuthor{PGS}
