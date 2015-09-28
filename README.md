@@ -32,7 +32,7 @@ https://github.com/YinanZheng/PGS/wiki
 
 2.	Wang L, Zhou J, Qu A. Penalized generalized estimating equations for high-dimensional longitudinal data analysis. Biometrics. 2012;68(2):353-60. doi: 10.1111/j.1541-0420.2011.01678.x. PubMed PMID: 21955051. http://www.ncbi.nlm.nih.gov/pubmed/21955051
 
-##Contact me:
+##Contact package maintainer:
 Yinan Zheng 
 
 Email: y-zheng@northwestern.edu
