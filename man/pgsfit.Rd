@@ -54,40 +54,40 @@ Fitting and variable penalization results; a list object \code{pgsobj} consistin
 ### Dataset preview
 BJdata()
 
-### Convert binary variables into factor type.
+### Convert binary variables into factor type
 BJlung$gender = factor(BJlung$gender)
 BJlung$heat = factor(BJlung$heat)
 BJlung$cigwear = factor(BJlung$cigwear)
 
-### Merge miRNA and lung function dataset.
+### Merge miRNA and lung function dataset
 BJdata <- merge(BJmirna, BJlung, by=c("SID","WD"))
 
-### Data must be sorted by study subject ID and multiple measurements indicator.
+### Data must be sorted by study subject ID and multiple measurements indicator
 BJdata <- BJdata[with(BJdata, order(SID, WD)), ]
 
 ### Extract dependent variable (lung function)
 y.vect<-BJdata$FEV1
 
-### Extract subjuect ID variable indicating repeated measures.
+### Extract subjuect ID variable indicating repeated measures
 id.vect<-BJdata$SID
 
-### Extract microRNA data matrix.
+### Extract microRNA data matrix
 M<-BJdata[,3:168]
 
-### Extract covariate data matrix.
+### Extract covariate data matrix
 COV<-BJdata[,170:179]
 
-### In the example we use linear mixed-effect model (default) for pre-ranking, ranked by absolute value of coefficients (default).
+### In the example we use linear mixed-effect model (default) for pre-ranking, ranked by p-values
 prerank_LMM_par = preRank(y.vect, id.vect, M, COV)
 preRank.vect = prerank_LMM_par
 
-### Initiate Pm sequence: Number of top ranking genomic marks.
+### Initiate Pm sequence: Number of top ranking genomic marks
 (Pm.vect<-c(seq(10,160,10)))
 
-### Initiate lambda sequence: Penalty parameter.
+### Initiate lambda sequence: Penalty parameter
 (lam.vect<-seq(0.02, 0.3, 0.02))
 
-### If your computer have multiple cores, it is recommended to enable parallel option (default).
+### If your computer have multiple cores, it is recommended to enable parallel option (default)
 PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
 }
 \seealso{

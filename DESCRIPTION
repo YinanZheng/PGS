@@ -1,9 +1,9 @@
 Package: PGS
 Type: Package
 Title: Penalized GEE with Grid Search
-Version: 0.1.1
-Date: 2015-09-10
-Author: Yinan Zheng
+Version: 0.1.2
+Date: 2015-09-26
+Author: Yinan Zheng [aut, cre], Fei Zhe [aut], Haixiang Zhang [ctb], Yi Li [cph], Lifang Hou [cph]
 Maintainer: Yinan Zheng <y-zheng@northwestern.edu>
 Description: Penalized GEE model for association study of high-dimensional genomic data with repeated measures. 
 License: GPL-2

@@ -5,8 +5,7 @@
 \title{Site-by-site Independent Pre-ranking for Genomic marks}
 \usage{
 preRank(y.vect, id.vect, M, COV = NULL, method = c("LMM", "GEE"),
-  rankby = c("coef", "p"), parallel = TRUE, ncore = detectCores(),
-  write = FALSE)
+  corstr = "ar1", parallel = TRUE, ncore = detectCores(), write = FALSE)
 }
 \arguments{
 \item{y.vect}{a vector of dependent variable.}
@@ -19,7 +18,7 @@ preRank(y.vect, id.vect, M, COV = NULL, method = c("LMM", "GEE"),
 
 \item{method}{a character string specifying fitting method. Linear mixed-effect model (\code{"LMM"}) and generalized estimation equation (\code{"GEE"}) method are supported. Default = \code{"LMM"}.}
 
-\item{rankby}{a character string specifying how the geneomic marks should be ranked. They can be ranked by either their absolute value of coefficients (\code{"coef"}), or their statistics (t-statistics or Z-statistics) (\code{"stat"}). Default = \code{"coef"}.}
+\item{corstr}{a character string specifying the correlation structure when \code{method = "GEE"}. The following are permitted: '"independence"', '"exchangeable"', '"ar1"', '"unstructured"' and '"userdefined"'. Default = "ar1". (see \code{\link{geeglm}})}
 
 \item{parallel}{logical. Enable parallel computing feature? Default = \code{TRUE}.}
 
@@ -31,43 +30,43 @@ preRank(y.vect, id.vect, M, COV = NULL, method = c("LMM", "GEE"),
 A vector of ranked genomic marks.
 }
 \description{
-\code{preRank} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by coefficients or statistics.
+\code{preRank} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by p-values.
 }
 \examples{
 ### Dataset preview
 BJdata()
 
-### Convert binary variables into factor type.
+### Convert binary variables into factor type
 BJlung$gender = factor(BJlung$gender)
 BJlung$heat = factor(BJlung$heat)
 BJlung$cigwear = factor(BJlung$cigwear)
 
-### Merge miRNA and lung function dataset.
+### Merge miRNA and lung function dataset
 BJdata <- merge(BJmirna, BJlung, by=c("SID","WD"))
 
-### Data must be sorted by study subject ID and multiple measurements indicator.
+### Data must be sorted by study subject ID and multiple measurements indicator
 BJdata <- BJdata[with(BJdata, order(SID, WD)), ]
 
 ### Extract dependent variable (lung function)
 y.vect<-BJdata$FEV1
 
-### Extract subjuect ID variable indicating repeated measures.
+### Extract subjuect ID variable indicating repeated measures
 id.vect<-BJdata$SID
 
-### Extract microRNA data matrix.
+### Extract microRNA data matrix
 M<-BJdata[,3:168]
 
-### Extract covariate data matrix.
+### Extract covariate data matrix
 COV<-BJdata[,170:179]
 
-### LMM site-by-site pre-ranking results.
+### LMM site-by-site pre-ranking results
 prerank_LMM_par = preRank(y.vect, id.vect, M, COV, method = "LMM")
-### GEE site-by-site pre-ranking results.
+### GEE site-by-site pre-ranking results
 prerank_GEE_par = preRank(y.vect, id.vect, M, COV, method = "GEE")
-### Save the details in csv file
+### Save the full site-by-site testing results into a csv file in current working directory
 prerank_LMM_par = preRank(y.vect, id.vect, M, COV, method = "LMM", write = T)
 }
 \seealso{
-see \code{\link{pgsfit}} using the results from \code{preRank} as input to run PGS.
+see \code{\link{pgsfit}} using the results from \code{\link{preRank}} as input to run PGS. For more details on LMM and GEE, see \code{\link{lmer}} and \code{\link{geeglm}}.
 }
 

@@ -15,7 +15,7 @@ plotGrid(pgsobj, colrange = NULL)
 \code{plotGrid} is used to visualize the cross-validation (CV) error grid using a heat map.
 }
 \examples{
-PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 1)
 plotGrid(PGSfit)
 }
 \seealso{

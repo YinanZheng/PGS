@@ -8,7 +8,7 @@
 #' @seealso see \code{\link{pgsfit}} to run PGS and obtain \code{pgsobj} object.
 #' 
 #' @examples
-#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 1)
 #' plotGrid(PGSfit)
 
 plotGrid <- function(pgsobj,colrange = NULL)
