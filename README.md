@@ -25,7 +25,11 @@ _`# Install PGS:`_
     install.packages("PGS_0.1.2.tar.gz", repo = NULL) # Linux
 
 ##Wiki & Examples:
-[Example: Micro RNA expression and lung function](https://github.com/YinanZheng/PGS/wiki)
+
+[Wiki: PGS](https://github.com/YinanZheng/PGS/wiki)
+[Example: Micro RNA expression and lung function](https://github.com/YinanZheng/PGS/wiki/Example:-miRNA-expression-and-lung-function)
+
+
 
 ##Citation:
 1.	Zheng Y, Fei Z, Zhang W, Starren JB, Liu L, Baccarelli AA, Li Y, Hou L. PGS: a tool for association study of high-dimensional microRNA expression data with repeated measures. Bioinformatics. 2014;30(19):2802-7. doi: 10.1093/bioinformatics/btu396. PubMed PMID: 24947752; PubMed Central PMCID: PMC4173025. http://www.ncbi.nlm.nih.gov/pubmed/24947752
