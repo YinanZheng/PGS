@@ -20,9 +20,9 @@ _`# First check and install dependencies:`_
     
 _`# Install PGS:`_
 
-    install.packages("PGS_0.1.1.tgz", repo = NULL) # Mac OS X
-    install.packages("PGS_0.1.1.zip", repo = NULL) # Windows
-    install.packages("PGS_0.1.1.tar.gz", repo = NULL) # Linux
+    install.packages("PGS_0.1.2.tgz", repo = NULL) # Mac OS X
+    install.packages("PGS_0.1.2.zip", repo = NULL) # Windows
+    install.packages("PGS_0.1.2.tar.gz", repo = NULL) # Linux
 
 ##Wiki & Examples:
 https://github.com/YinanZheng/PGS/wiki
