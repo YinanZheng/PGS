@@ -7,17 +7,6 @@
 
 using namespace Rcpp;
 
-// indGen_cpp
-List indGen_cpp(vec id_vect);
-RcppExport SEXP PGS_indGen_cpp(SEXP id_vectSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
-    __result = Rcpp::wrap(indGen_cpp(id_vect));
-    return __result;
-END_RCPP
-}
 // est_pgee_grid_cpp
 List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str);
 RcppExport SEXP PGS_est_pgee_grid_cpp(SEXP y_vectSEXP, SEXP x_matSEXP, SEXP id_vectSEXP, SEXP beta_hat_RSEXP, SEXP foldSEXP, SEXP pSEXP, SEXP lam_vectSEXP, SEXP eps_stopSEXP, SEXP iter_trySEXP, SEXP corr_strSEXP) {
@@ -54,6 +43,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type iter_try(iter_trySEXP);
     Rcpp::traits::input_parameter< std::string >::type corr_str(corr_strSEXP);
     __result = Rcpp::wrap(one_run_grid_cpp(y_vect, x_mat, id_vect, fold, p, lam_vect, eps_stop, iter_try, corr_str));
+    return __result;
+END_RCPP
+}
+// indGen_cpp
+List indGen_cpp(vec id_vect);
+RcppExport SEXP PGS_indGen_cpp(SEXP id_vectSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< vec >::type id_vect(id_vectSEXP);
+    __result = Rcpp::wrap(indGen_cpp(id_vect));
     return __result;
 END_RCPP
 }

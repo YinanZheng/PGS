@@ -110,7 +110,7 @@ pgsfit<-function(
   id.vect = sort(as.numeric(as.factor(as.character(id.vect)))) # Convert any id format to number.
   indGen_res = indGen_cpp(id.vect)
   
-  if (!is.null(COV)) COV <- as.matrix((model.matrix(~.,COV))[,-1])
+  if (!is.null(COV)) {COV <- as.matrix((model.matrix(~.,as.data.frame(COV)))[,-1]); n.COV = ncol(COV)} else {n.COV = 0}
   if (is.null(seed)) seed = round(as.numeric(Sys.time()))
   
   cat(paste0("The complete working dataset contains ", indGen_res$n, " individuals and a total of ", indGen_res$obs_n, " observations. (seed = ", seed,")\n"))
@@ -119,7 +119,6 @@ pgsfit<-function(
   L.lam = length(lam.vect)
   
   n.marks = ncol(M)
-  n.COV = ncol(COV)
   PGS.limit = min( (indGen_res$obs_n - n.COV - 1), n.marks) # The max number of p (exclude COV) that PGS can handles should not exceed number of samples
   
   preRank.vect = preRank.vect[1:PGS.limit]
@@ -162,12 +161,23 @@ pgsfit<-function(
     registerDoSEQ()
   }
 
-  res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
-    set.seed(seed)
-    x.mat<-as.matrix(cbind(M_chunk, COV))
-    p = ncol(x.mat)
-    one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
-  }
+#   if(!is.null(COV))
+#   {
+    res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
+      set.seed(seed)
+      if(!is.null(COV)) {x.mat<-as.matrix(cbind(M_chunk, COV))} else {x.mat<-as.matrix(cbind(M_chunk))}
+      p = ncol(x.mat)
+      one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
+    }
+#   } else {
+#     res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
+#       set.seed(seed)
+#       x.mat<-as.matrix(cbind(M_chunk))
+#       p = ncol(x.mat)
+#       one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
+#     }
+#   }
+
   
   ## Summarize the results
   for(i in 1:L.Pm)

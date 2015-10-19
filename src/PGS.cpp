@@ -24,7 +24,7 @@ vec q_scad_cpp(vec theta, double lambda, double a) {
 List S_H_E_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec beta_val, int n, vec m, int obs_n, int p, uvec start, uvec end, vec repm, uvec repm_times, double lam){
   
   double sigma2;
-  int i = 0, m_temp;
+  int i = 0, m_temp, repm_n = repm.n_elem;
   vec Y;
   mat resi, S(p,1), H(p,p), E, X, Xh, hat_R;
   S.fill(0.0); H.fill(0.0);
@@ -32,7 +32,7 @@ List S_H_E_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec be
   resi = y_vect - x_mat * beta_val;
   sigma2 = as<double>(wrap(sum(pow(resi, 2))/(obs_n - p)));
   
-  for(int j=0; j<repm.n_elem; j++)
+  for(int j=0; j<repm_n; j++)
   {
     m_temp = repm_times(j)-1;
     hat_R = hat_R_full.submat(0, 0, m_temp, m_temp);  //Trim full hat_R to required m
