@@ -163,7 +163,7 @@ pgsfit<-function(
   
     res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
       set.seed(seed)
-      x.mat<-as.matrix(cbind(M_chunk, COV))
+      x.mat<-cbind(as.matrix(M_chunk), COV)
       p = ncol(x.mat)
       one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
     }
