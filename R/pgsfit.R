@@ -63,10 +63,10 @@
 #' (Pm.vect<-c(seq(10,160,10)))
 #' 
 #' ### Initiate lambda sequence: Penalty parameter
-#' (lam.vect<-seq(0.02, 0.3, 0.02))      
+#' (lam.vect<-seq(0.05, 0.1, 0.005))      
 #' 
 #' ### If your computer have multiple cores, it is recommended to enable parallel option (default)
-#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+#' PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 1)
 
 pgsfit<-function(
                   y.vect,                
@@ -157,28 +157,17 @@ pgsfit<-function(
     cat(paste0("Start running PGS with ", ncore, " cores in parallel...   (",Sys.time(),")\n"))
     if(getDoParWorkers() != ncore) registerDoParallel(ncore)
   } else {
-    cat(paste0("Start Running PGS with single core...   (",Sys.time(),")\n"))
+    cat(paste0("Start running PGS with single core...   (",Sys.time(),")\n"))
     registerDoSEQ()
   }
-
-#   if(!is.null(COV))
-#   {
+  
     res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
       set.seed(seed)
-      if(!is.null(COV)) {x.mat<-as.matrix(cbind(M_chunk, COV))} else {x.mat<-as.matrix(cbind(M_chunk))}
+      x.mat<-as.matrix(cbind(M_chunk, COV))
       p = ncol(x.mat)
       one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
     }
-#   } else {
-#     res_par <- foreach(M_chunk = iblkcol_cum(M,Pm.vect), .packages = c("PGS") ) %dopar% {
-#       set.seed(seed)
-#       x.mat<-as.matrix(cbind(M_chunk))
-#       p = ncol(x.mat)
-#       one_run_grid_cpp(y.vect, x.mat, id.vect, fold, p, lam.vect, eps, iter.n, corstr)
-#     }
-#   }
 
-  
   ## Summarize the results
   for(i in 1:L.Pm)
   {
@@ -197,6 +186,7 @@ pgsfit<-function(
   
   best.ind<-which(grid.err==min(grid.err), arr.ind=T)
 
+  beta_indep<-beta.shrink.indep.list[[ best.ind[1] ]]
   beta<-beta.shrink.corr.list[[ best.ind[1] ]]
   varb<-var.sand.corr.list[[ best.ind[1] ]]
   se<-sqrt(varb)
@@ -212,6 +202,32 @@ pgsfit<-function(
   coefficients$center = M_center_sel
   coefficients$scale = M_scale_sel
 
+  ## Use pertumation to select variable (use odd number to avoid ties)
+  y.vect.shuffle_mat = matrix(NA,nrow = indGen_res$obs_n, ncol = 101)
+  for(i in 1:101)
+  {
+    y.vect.shuffle_mat[,i] = sample(y.vect,indGen_res$obs_n)
+  }
+  
+  M_best = as.matrix(cbind(M[,1:Pm.vect[best.ind[1]]],COV))
+  p_best = ncol(M_best)
+  lambda_best = lam.vect[best.ind[2]]
+  
+  cat(paste0("Start running PGS permutation for variable selection...   (",Sys.time(),")\n"))
+  permute_par <- foreach(y_chunk = iblkcol_lag(y.vect.shuffle_mat, chunks = ncore), .combine = cbind, .packages = c("PGS") ) %dopar% {
+    set.seed(seed)
+    chunk_n = ncol(y_chunk)
+    temp = matrix(NA,nrow = p_best, ncol = chunk_n)
+    for(i in 1:chunk_n)
+      {temp[,i] = one_run_grid_cpp(y_chunk[,i], M_best, id.vect, fold, p_best, lambda_best, eps, iter.n, corstr)$beta.shrink.cor}
+    temp
+  }
+  
+  p.select = rep(NA, p_best)
+  for(i in 1:p_best)
+    {p.select[i] = mean(abs(permute_par[i,])>abs(coefficients$Estimate[i]))}
+  coefficients$p.select = p.select
+  
   res = list(coefficients = coefficients,
              grid.err = grid.err,
              lam.sel.vect = lam.sel.vect,

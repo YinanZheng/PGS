@@ -85,10 +85,10 @@ preRank.vect = prerank_LMM_par
 (Pm.vect<-c(seq(10,160,10)))
 
 ### Initiate lambda sequence: Penalty parameter
-(lam.vect<-seq(0.02, 0.3, 0.02))
+(lam.vect<-seq(0.05, 0.1, 0.005))
 
 ### If your computer have multiple cores, it is recommended to enable parallel option (default)
-PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 2015)
+PGSfit = pgsfit(y.vect, id.vect, M, COV, preRank.vect, Pm.vect, lam.vect, seed = 1)
 }
 \seealso{
 see \code{\link{preRank}} to obtain proper ranked genomic marks. see \code{\link{plotGrid}} to visualize and diagnose fitting results.
