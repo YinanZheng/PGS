@@ -186,7 +186,6 @@ pgsfit<-function(
   
   best.ind<-which(grid.err==min(grid.err), arr.ind=T)
 
-  beta_indep<-beta.shrink.indep.list[[ best.ind[1] ]]
   beta<-beta.shrink.corr.list[[ best.ind[1] ]]
   varb<-var.sand.corr.list[[ best.ind[1] ]]
   se<-sqrt(varb)
@@ -209,7 +208,7 @@ pgsfit<-function(
     y.vect.shuffle_mat[,i] = sample(y.vect,indGen_res$obs_n)
   }
   
-  M_best = as.matrix(cbind(M[,1:Pm.vect[best.ind[1]]],COV))
+  M_best = cbind(as.matrix(M[,1:Pm.vect[best.ind[1]]]),COV)
   p_best = ncol(M_best)
   lambda_best = lam.vect[best.ind[2]]
   
