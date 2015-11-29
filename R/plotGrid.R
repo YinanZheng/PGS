@@ -53,14 +53,14 @@ plotGrid <- function(pgsobj, IQR.times = 1.5, text.size = 4, xaxislab.size = 14,
   
   plot.title = "Cross-validation Error Grid"
   plot.subtitle =  bquote("Minimal error achieved at" ~ P[m] ~ "=" ~ .(rownames(grid.err)[pgsobj$which.bestPm]) ~
-                                      "and -ln(" ~ italic(.(intToUtf8(955L))) ~ ") =" ~ .(as.character(round(-log(as.numeric(colnames(grid.err)[pgsobj$which.bestLambda])),2))) )
-  qplot(x=Lambda, y=Pm, data=grid.err.m, fill = value, geom="tile", xlab = bquote("-ln(" ~ lambda ~")"), ylab = bquote(P[m])) + 
+                                      "and -ln(" * lambda * ") =" ~ .(as.character(round(-log(as.numeric(colnames(grid.err)[pgsobj$which.bestLambda])),2))) )
+  qplot(x=Lambda, y=Pm, data=grid.err.m, fill = value, geom="tile", xlab = bquote("-ln(" * lambda * ")"), ylab = bquote(P[m])) + 
     scale_fill_gradient("CV error (x10)",low=col_low, high=col_high) + 
     geom_text(aes(label=small, angle = 90), color="white", size=text.size) + 
     geom_text(aes(label=plusGlobal, angle = 90), color="yellow", size=text.size) + 
     geom_text(aes(label=plus, angle = 90), color="yellow", size=text.size) + 
     geom_text(aes(label=converge, angle = 90), color="red", size=text.size) + 
-    ggtitle(bquote(atop(.(plot.title), atop(italic(.(plot.subtitle)), "")))) +
+    ggtitle(bquote(atop(.(plot.title), atop(.(plot.subtitle), "")))) +
     theme(plot.title = element_text(size = rel(1.7))) +
     theme(axis.title = element_text(size = rel(1.5))) +
     theme(axis.text = element_text(size = rel(1.2))) +
