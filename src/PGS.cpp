@@ -151,7 +151,7 @@ List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec bet
       x_test = x_mat.rows(idx_test);
       
       beta_shrink_res = beta_shrink_normal_cpp(y_train, x_train, id_train, hat_R_full, beta_ini, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[3]), as<uvec>(indGen_res[4]), as<vec>(indGen_res[5]), as<uvec>(indGen_res[6]), lam_temp, eps_stop, iter_try);
-      cv_sum += sum(pow((y_test - x_test * as<vec>(beta_shrink_res[0])),2));                        
+      cv_sum += sqrt(mean(pow((y_test - x_test * as<vec>(beta_shrink_res[0])),2)));                        
       flag_stop_sum += as<double>(beta_shrink_res[2]);
       iter_n_sum += as<double>(beta_shrink_res[3]);
     }
@@ -214,9 +214,8 @@ List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int f
 //-----------------------------------------------------
 // Fit beta with independent structure then refit with hat_R
 // [[Rcpp::export]]
-List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str){
+List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_ini, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str){
 
-  vec beta_ini(p); beta_ini.fill(0);
   vec beta_shrink_indep;
   
   // Find shrinked beta using independent structure, starting from initialized beta, to get shrinked beta (independent)
