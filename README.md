@@ -2,27 +2,27 @@
 
 Penalized GEE model for association study of high-dimensional genomic data. 
 
-##Download PGS R package (current version 0.1.3):
+##Download PGS R package (current version 0.2.0):
 
-[PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.3/PGS_0.1.3.tgz)
+[PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.tgz)
 
-[PGS for Windows (32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.3/PGS_0.1.3.zip)
+[PGS for Windows (32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.zip)
 
-[PGS for Linux (86/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.1.3/PGS_0.1.3.tar.gz)
+[PGS for Linux (86/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.tar.gz)
 
 ## Installation in R session
 
 _`# First check and install dependencies:`_
 
-    list.of.dependencies <- c("doParallel", "lme4", "geepack", "ggplot2", "reshape2", "RColorBrewer")
+    list.of.dependencies <- c("doParallel", "lme4", "geepack", "ggplot2", "reshape2")
     new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
     if(length(new.packages)) install.packages(new.packages) else cat("Dependencies are ready!\n")
     
 _`# Install PGS:`_
 
-    install.packages("PGS_0.1.3.tgz", repo = NULL) # Mac OS X
-    install.packages("PGS_0.1.3.zip", repo = NULL) # Windows
-    install.packages("PGS_0.1.3.tar.gz", repo = NULL) # Linux
+    install.packages("PGS_0.2.0.tgz", repo = NULL) # Mac OS X
+    install.packages("PGS_0.2.0.zip", repo = NULL) # Windows
+    install.packages("PGS_0.2.0.tar.gz", repo = NULL) # Linux
 
 ##Wiki & Examples:
 
