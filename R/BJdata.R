@@ -10,8 +10,30 @@
 #' \code{BJlung} is a data frame of size 240 by 13.
 #' 
 #' @details 
-#' The data set \code{BJmirna} contains study subject ID (\code{SID}), indicator of examination days (\code{WD}), and 166 blood miRNA expression data. Blood samples were collection after work one the examination days.
-#' The data set \code{BJlung} contains study subject id (\code{SID}), indicator of examination days (\code{WD}), lung function measured by forced expiratory volume in 1 second (\code{FEV1}), air pollution measured by particulate matter up to 2.5 micrometers in size (\code{pm25}), gender (\code{gender}), age (\code{age}), body mass index (\code{bmi}), use of central heating system (\code{heat}), smoke cigarette during examination day (\code{cigwear}), commute time (\code{waytime}), working hours (\code{workhr}), humidity measured by dew point (\code{dwep}), and temparature (\code{temp}). All variables were measured during the examination days. 
+#' The data set \code{BJmirna} contains:
+#' \itemize{
+#'    \item \code{SID}: study subject ID
+#'    \item \code{WD}: indicator of examination days
+#'    \item 166 blood miRNA expression data
+#'    }
+#' Blood samples were collection after work one the examination days.\cr\cr
+#' The data set \code{BJlung} contains:
+#' \itemize{
+#'    \item \code{SID}: study subject id
+#'    \item \code{WD}: indicator of examination days, 
+#'    \item \code{FEV1}: lung function measured by forced expiratory volume in 1 second 
+#'    \item \code{pm25}: air pollution measured by particulate matter up to 2.5 micrometers in size 
+#'    \item \code{gender}: gender 
+#'    \item \code{age}: age 
+#'    \item \code{bmi}: body mass index 
+#'    \item \code{heat}: use of central heating system
+#'    \item \code{cigwear}: smoke cigarette during examination day 
+#'    \item \code{waytime}:commute time 
+#'    \item \code{workhr}: working hours 
+#'    \item \code{dewp}: humidity measured by dew point 
+#'    \item \code{temp}: temparature 
+#'    }
+#' All variables were measured during the examination days. 
 #' 
 #' @references 
 #' Hou L, Barupal J, Zhang W, et al. (2015) Environmental health perspectives.
@@ -34,7 +56,10 @@
 #' 
 #' ### Sort the data by study subject id and multiple measurement indicator.
 #' BJdata <- BJdata[with(BJdata, order(SID, WD)), ]
+#' 
+#' #For more information, please visit: https://github.com/YinanZheng/PGS/wiki/Example:-miRNA-expression-and-lung-function
 
+#' @export
 BJdata<-function()
 {
   data(BJmirna)
@@ -49,4 +74,3 @@ BJdata<-function()
   print(head(BJlung))
   cat(paste0("'BJlung' has ", nrow(BJlung), " rows and ", ncol(BJlung), " columns.\n"))
 }
-

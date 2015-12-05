@@ -58,12 +58,12 @@ List S_H_E_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec be
 
 //-----------------------------------------------------
 // Shinked beta estimation for a given lambda
-List beta_shrink_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec beta_ini, int n, vec m, int obs_n, int p, uvec start, uvec end, vec repm, uvec repm_times, double lam, double eps_stop, int iter_try){
+List beta_shrink_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec beta_ini, int n, vec m, int obs_n, int p, uvec start, uvec end, vec repm, uvec repm_times, double lam, double eps_tozero, double eps_stop, int iter_try){
   
   int i = 0, step_up = 0, repm_n = repm.n_elem, m_temp;
-  vec beta_new = beta_ini, Y, var_sand;
+  vec beta_new = beta_ini, Y, var_sand, zerobeta(p);
   mat S, H, E, M(p,p), X, EPS, hee, hnee, hat_R;
-  M.fill(0.0);
+  M.fill(0.0); zerobeta.fill(0);
   double flag_stop = math::inf();
   double sigma2;
   
@@ -76,6 +76,8 @@ List beta_shrink_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, 
   {
     vec beta_old = beta_new;
     beta_new = beta_old + (H + n * E + (1e-6) * eye(p,p)).i() * (S - n * E * beta_old);
+    zerobeta.elem(find(abs(beta_new) < eps_tozero)).fill(1);
+    beta_new.elem(find(zerobeta)).fill(0);
     S_H_E_val = S_H_E_normal_cpp(y_vect, x_mat, id_vect, hat_R_full, beta_new, n, m, obs_n, p, start, end, repm, repm_times, lam);
     S = as<mat>(S_H_E_val[0]);
     H = as<mat>(S_H_E_val[1]);
@@ -113,7 +115,7 @@ List beta_shrink_normal_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, 
 
 //-----------------------------------------------------
 // Cross-validation across an array of lambda and pick up the best.
-List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec beta_ini, int fold, int n, vec m, int obs_n, int p, uvec start, uvec end, vec lam_vect, double eps_stop, int iter_try){
+List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec beta_ini, int fold, int n, vec m, int obs_n, int p, uvec start, uvec end, vec lam_vect, double eps_tozero, double eps_stop, int iter_try){
   
   int lam_length = lam_vect.n_elem;
   double lam_temp, cv_sum, flag_stop_sum, iter_n_sum, cv_min = math::inf(), lam_min = -1;
@@ -150,7 +152,7 @@ List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec bet
       y_test = y_vect.elem(idx_test);
       x_test = x_mat.rows(idx_test);
       
-      beta_shrink_res = beta_shrink_normal_cpp(y_train, x_train, id_train, hat_R_full, beta_ini, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[3]), as<uvec>(indGen_res[4]), as<vec>(indGen_res[5]), as<uvec>(indGen_res[6]), lam_temp, eps_stop, iter_try);
+      beta_shrink_res = beta_shrink_normal_cpp(y_train, x_train, id_train, hat_R_full, beta_ini, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[3]), as<uvec>(indGen_res[4]), as<vec>(indGen_res[5]), as<uvec>(indGen_res[6]), lam_temp, eps_tozero, eps_stop, iter_try);
       cv_sum += sqrt(mean(pow((y_test - x_test * as<vec>(beta_shrink_res[0])),2)));                        
       flag_stop_sum += as<double>(beta_shrink_res[2]);
       iter_n_sum += as<double>(beta_shrink_res[3]);
@@ -180,7 +182,7 @@ List CV_lam_grid_cpp(vec y_vect, mat x_mat, vec id_vect, mat hat_R_full, vec bet
 //-----------------------------------------------------
 // Best results (lambda) given Pm
 // [[Rcpp::export]]
-List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str){
+List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int fold, int p, vec lam_vect, double eps_tozero, double eps_stop, int iter_try, std::string corr_str){
   
   // Initialize beta: all zeros. For CV and best model fitting, use initialized beta as starting point.
   vec beta_ini(p); beta_ini.fill(0);
@@ -192,10 +194,10 @@ List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int f
   mat hat_R_full = corr_est_normal_cpp(y_vect, x_mat, id_vect, beta_hat_R, p, corr_str);
   
   // Run cross-validation to find the best lambda (lam.min)  
-  List lam_cv = CV_lam_grid_cpp(y_vect, x_mat, id_vect, hat_R_full, beta_ini, fold, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[7]), as<uvec>(indGen_res[8]), lam_vect, eps_stop, iter_try);
+  List lam_cv = CV_lam_grid_cpp(y_vect, x_mat, id_vect, hat_R_full, beta_ini, fold, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[7]), as<uvec>(indGen_res[8]), lam_vect, eps_tozero, eps_stop, iter_try);
   
   // Run the model using all data with the best lambda
-  List beta_fit = beta_shrink_normal_cpp(y_vect, x_mat, id_vect, hat_R_full, beta_ini, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[3]), as<uvec>(indGen_res[4]), as<vec>(indGen_res[5]), as<uvec>(indGen_res[6]), as<double>(lam_cv[4]), eps_stop, iter_try);
+  List beta_fit = beta_shrink_normal_cpp(y_vect, x_mat, id_vect, hat_R_full, beta_ini, as<int>(indGen_res[0]), as<vec>(indGen_res[1]), as<int>(indGen_res[2]), p, as<uvec>(indGen_res[3]), as<uvec>(indGen_res[4]), as<vec>(indGen_res[5]), as<uvec>(indGen_res[6]), as<double>(lam_cv[4]), eps_tozero, eps_stop, iter_try);
   
   return List::create(
                       Named("lam.cv.vector") = as<vec>(lam_cv[1]),
@@ -214,16 +216,16 @@ List est_pgee_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_hat_R, int f
 //-----------------------------------------------------
 // Fit beta with independent structure then refit with hat_R
 // [[Rcpp::export]]
-List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_ini, int fold, int p, vec lam_vect, double eps_stop, int iter_try, std::string corr_str){
+List one_run_grid_cpp(vec y_vect, mat x_mat, vec id_vect, vec beta_ini, int fold, int p, vec lam_vect, double eps_tozero, double eps_stop, int iter_try, std::string corr_str){
 
   vec beta_shrink_indep;
   
   // Find shrinked beta using independent structure, starting from initialized beta, to get shrinked beta (independent)
-  List beta_fit_indep = est_pgee_grid_cpp(y_vect, x_mat, id_vect, beta_ini, fold, p, lam_vect, eps_stop, iter_try, "indep");
+  List beta_fit_indep = est_pgee_grid_cpp(y_vect, x_mat, id_vect, beta_ini, fold, p, lam_vect, eps_tozero, eps_stop, iter_try, "indep");
   beta_shrink_indep = as<vec>(beta_fit_indep[4]);
   
   // Using independent shrinked beta, estimate specific working correlation structure, and refit the model starting from initialized beta
-  List beta_fit_corr = est_pgee_grid_cpp(y_vect, x_mat, id_vect, beta_shrink_indep, fold, p, lam_vect, eps_stop, iter_try, corr_str);
+  List beta_fit_corr = est_pgee_grid_cpp(y_vect, x_mat, id_vect, beta_shrink_indep, fold, p, lam_vect, eps_tozero, eps_stop, iter_try, corr_str);
   
   return List::create(
                       Named("lam.cv.cor") = as<vec>(beta_fit_corr[0]),

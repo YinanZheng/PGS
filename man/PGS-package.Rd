@@ -11,11 +11,9 @@
 \details{
 \code{\link{BJdata}} is used to load and preview PGS built-in example datasets \code{BJmirna} and \code{BJlung}.
 
-\code{\link{pgsfit}} is used to fit and determine the best results from penalized GEE method across pre-specified tunning parameter grid.
+\code{\link{pgsfit}} is used to fit and determine the best results from penalized GEE method across tunning parameter grid.
 
-\code{\link{plotGrid}} is used to visualize the cross-validation (CV) error grid using a heat map.
-
-\code{\link{preRank}} is used to fit mixed-effect models or generalize estimation equations across genomic marks and rank by p-values.
+\code{\link{sis}} is used to conduct sure independent screening across high-dimensional variables.
 }
 \author{
 \packageAuthor{PGS}
@@ -27,4 +25,4 @@ Zheng Y, Fei Z, Zhang W, Starren JB, Liu L, Baccarelli AA, Li Y, Hou L. PGS: a t
 
 Wang L, Zhou J, Qu A. Penalized generalized estimating equations for high-dimensional longitudinal data analysis. Biometrics. 2012;68(2):353-60. doi: 10.1111/j.1541-0420.2011.01678.x. PubMed PMID: 21955051. (\href{http://www.ncbi.nlm.nih.gov/pubmed/21955051}{pubmed})
 }
-\keyword{ package }
+\keyword{package}
