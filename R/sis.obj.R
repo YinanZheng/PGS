@@ -21,8 +21,8 @@
 #' plot(sis.obj)
 #' 
 #' ## Return sure independent screening results:
-#' coefficients = coef(sis.obj)
-#' head(coefficients)
+#' coef(sis.obj)  # complete results
+#' coef(sis.obj, fdr = 0.05)  # results with BH.FDR < 0.05
 #' 
 #' #For more information, please visit: https://github.com/YinanZheng/PGS/wiki/Example:-miRNA-expression-and-lung-function
 
@@ -66,12 +66,12 @@ plot.sis.obj <- function(sis.obj) {
 #' @method coef sis.obj
 #' @rdname sis.obj
 #' @export
-coef.sis.obj <- function(sis.obj) {
+coef.sis.obj <- function(sis.obj, p = 1, fdr = 1, bonferroni = 1) {
   coef = data.frame(name = sis.obj$name,
                     estimate = sis.obj$estimate,
                     stderr = sis.obj$stderr,
                     p.value = sis.obj$p.value,
                     bh.fdr = sis.obj$bh.fdr,
                     bonferroni.p = sis.obj$bonferroni.p, row.names = sis.obj$name)
-  return(coef)
+  return(subset(coef, (p.value <= p) & (bh.fdr <= fdr) & (bonferroni.p <= bonferroni)))
 }

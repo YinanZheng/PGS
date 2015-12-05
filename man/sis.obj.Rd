@@ -13,7 +13,7 @@ sis.obj(name, estimate, stderr, p.value, bh.fdr, bonferroni.p, method)
 
 \method{plot}{sis.obj}(sis.obj)
 
-\method{coef}{sis.obj}(sis.obj)
+\method{coef}{sis.obj}(sis.obj, p = 1, fdr = 1, bonferroni = 1)
 }
 \description{
 \code{sis.obj} is a S3 class to store PGS sure independent screening results. Internally used by \code{sis} and \code{pgsfit}. \code{\link{sis.obj}} contains:
@@ -35,8 +35,8 @@ sis.obj
 plot(sis.obj)
 
 ## Return sure independent screening results:
-coefficients = coef(sis.obj)
-head(coefficients)
+coef(sis.obj)  # complete results
+coef(sis.obj, fdr = 0.05)  # results with BH.FDR < 0.05
 
 #For more information, please visit: https://github.com/YinanZheng/PGS/wiki/Example:-miRNA-expression-and-lung-function
 }
