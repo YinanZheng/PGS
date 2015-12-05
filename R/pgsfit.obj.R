@@ -71,7 +71,7 @@ pgsfit.obj <- function(grid.err, lam.sel.vect, beta.shrink.corr.list, var.sand.c
 #' @export
 print.pgsfit.obj <- function(pgsfit.obj) {
 #   message("Use 'plot' method to plot grid search results; use 'coef' method to return coefficient matrix.")
-  if (pgsfit.obj$convergeMessage == "Conditionally converged!") cat(paste0("Warning: smallest error achieved at ", pgsfit.obj$Pm.vect[pgsfit.obj$which.bestGlobal[1]], " and -ln(lambda) = ",round(-log(pgsfit.obj$lam.vect[pgsfit.obj$which.bestGlobal[2]]),2), " but PGS did not converge within ", pgsfit.obj$maxIteration, " iternations (convergence error = ", pgsfit.obj$convergenceError[pgsfit.obj$which.bestGlobal[1]]," > the preset threshold: ", pgsfit.obj$convergenceThreshold), ". PGS will continue searching among the converged results.\n")
+  if (pgsfit.obj$convergeMessage == "Conditionally converged!") cat(paste0("Warning: smallest error achieved at Pm = ", pgsfit.obj$Pm.vect[pgsfit.obj$which.bestGlobal[1]], " and -ln(lambda) = ",round(-log(pgsfit.obj$lam.vect[pgsfit.obj$which.bestGlobal[2]]),2), " but PGS did not converge within ", pgsfit.obj$maxIteration, " iternations (convergence error = ", pgsfit.obj$convergenceError[pgsfit.obj$which.bestGlobal[1]]," > the preset threshold: ", pgsfit.obj$convergenceThreshold), ". PGS will continue searching among the converged results.\n")
   if (pgsfit.obj$convergeMessage == "Not converged!") cat(paste0("Warning: no converged result!"),"\n")
   if (pgsfit.obj$convergeMessage == "Converged!") cat(paste0("PGS converged!"),"\n")
   cat(paste0("The best selection results achieved using top ",pgsfit.obj$Pm.vect[pgsfit.obj$which.best[1]]," marks with -ln(lambda) = ", round(-log(pgsfit.obj$lam.vect[pgsfit.obj$which.best[2]]),2)),"\n")
