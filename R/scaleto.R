@@ -1,4 +1,4 @@
-## Internal function: scaleto
+## Internal function: scale data
 
 scaleto <- function(dat)
 {

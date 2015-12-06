@@ -138,23 +138,11 @@ pgsfit<-function( y.vect,
   iter.n.corr.vect = rep(NA, pm.n) # Initiate iteration time
   hat.R.list = vector("list", pm.n) # Initiate working correlation matrix
 
-  if (parallel == TRUE & ncore > 1)
-  { 
-    if(ncore > detectCores())
-    {
-      cat(paste0("You requested ", ncore, " cores. There are only ", detectCores()," in your machine!"),'\n')
-      ncore = detectCores()
-    }
-    cat(paste0("Start running PGS with ", ncore, " cores in parallel...   (",Sys.time(),")\n"))
-    if(getDoParWorkers() != ncore) registerDoParallel(ncore)
-  } else {
-    cat(paste0("Start running PGS with single core...   (",Sys.time(),")\n"))
-    registerDoSEQ()
-  }
+  checkParallel("PGS", parallel, ncore)
   
   cat(paste0("Tunning grid:"),'\n'); cat(paste0("   Pm = ", paste0(Pm.vect,collapse = " ")),'\n'); cat(paste0("   -ln(lambda) = ", lambda.lim[1], " to ", lambda.lim[2], " (", lambda.n, ")"),'\n')
   
-  res_par <- foreach(M_chunk = iblkcol_cum(M_scale$d,Pm.vect), .packages = c("PGS") ) %dopar% {
+  res_par <- foreach(M_chunk = iblkcol_cum(M_scale$d,Pm.vect), .packages = c("PGS","geepack") ) %dopar% {
    set.seed(seed)
    x.mat<-cbind(M_chunk, COV_scale$d)
    p = ncol(x.mat)

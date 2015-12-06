@@ -95,51 +95,24 @@ sis <- function(y.vect, id.vect=NULL, M, COV=NULL, method = c("LMM","GEE","MLR")
   {
     cat("Model: MLR\n")
     modelstatement = modelstatement_MLR
-    doOne <- function(i, datarun, Mdat){
-      datarun$Mone <- Mdat[,i]
-      model <- try(lm(modelstatement, data = datarun))
-      if("try-error" %in% class(model)) b <- rep(NA, 3) else { res=summary(model)$coefficients; b <- as.numeric(res[2,1:3])}
-      invisible(b)
-    }
+    doOne <- eval(parse(text = doOneGen("try(lm(modelstatement, data = datarun))","1:2")))
   }
   
   if (method == "LMM")
   {
     cat("Model: LMM\n")
     modelstatement = modelstatement_LMM
-    doOne <- function(i, datarun, Mdat){
-      datarun$Mone <- Mdat[,i]
-      model <- try(lmer(modelstatement, data = datarun))
-      if("try-error" %in% class(model)) b <- rep(NA, 3) else { res=summary(model)$coefficients; b <- as.numeric(res[2,1:3]) }
-      invisible(b)
-    }
+    doOne <- eval(parse(text = doOneGen("try(lmer(modelstatement, data = datarun))","1:2")))
   }
   
   if (method == "GEE")
   {
     cat("Model: GEE\n")
     modelstatement = modelstatement_GEE
-    doOne <- function(i, datarun, Mdat){
-    datarun$Mone <- Mdat[,i]
-    model <- try(geeglm(modelstatement, data = datarun, id = id.vect, corstr = corstr))
-    if("try-error" %in% class(model)) b <- rep(NA, 3) else { res=summary(model)$coefficients; b <- as.numeric(res[2,1:3])}
-      invisible(b)
-    }
+    doOne <- eval(parse(text = doOneGen("try(geeglm(modelstatement, data = datarun, id = id.vect, corstr = corstr))","1:2")))
   }
 
-  if (parallel == TRUE & ncore > 1)
-  {  
-    if(ncore > detectCores())
-    {
-      cat(paste0("You requested ", ncore, " cores. There are only ", detectCores()," in your machine!"),'\n')
-      ncore = detectCores()
-    }
-    cat(paste0("Running sure independent screening with ", ncore, " cores in parallel...   (",Sys.time(),")\n"))
-    if(getDoParWorkers() != ncore) registerDoParallel(ncore)
-  } else {
-    cat(paste0("Running sure independent screening with single core...   (",Sys.time(),")\n"))
-    registerDoSEQ()
-  }
+  checkParallel("Sure Independent Screening", parallel, ncore)
   
   results <- foreach(n = idiv(L.M, chunks = ncore), M_chunk = iblkcol_lag(M, chunks = ncore),.combine = 'rbind', .packages = c('lme4',"geepack")) %dopar% {
     do.call('rbind',lapply( seq_len(n), doOne, datarun, M_chunk) )
@@ -147,7 +120,8 @@ sis <- function(y.vect, id.vect=NULL, M, COV=NULL, method = c("LMM","GEE","MLR")
   
   results = data.frame(results)
   rownames(results) = M.names
-  results = setNames(results, c("Estimate","Std.Err","Statistic"))
+  results = setNames(results, c("Estimate","Std.Err"))
+  results$Statistic = with(results, Estimate/Std.Err)
   results$p.value = 2*(1-pnorm(abs(results$Statistic)))
   results$BH.FDR=p.adjust(results$p.value,"fdr")              # calculate Benjamini and Hochberg FDR
   results$Bonferroni=p.adjust(results$p.value,"bonferroni")   # calculate Bonferroni adjusted p-value
