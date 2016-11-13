@@ -1,28 +1,25 @@
 #PGS: Penalized GEE with Grid Search
+[![GitHub release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](https://github.com/YinanZheng/PGS/releases)
 
-Penalized GEE model for association study of high-dimensional genomic data. 
+*PGS* is an [R](http://en.wikipedia.org/wiki/R_%28programming_language%29) package for association study of high-dimensional repeatedly-measured genomic data. 
 
-##Download PGS R package (current version 0.2.0):
 
-[PGS for Mac OS X](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.tgz)
+## Installation 
 
-[PGS for Windows (32/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.zip)
-
-[PGS for Linux (86/64)](https://github.com/YinanZheng/PGS/releases/download/PGS_0.2.0/PGS_0.2.0.tar.gz)
-
-## Installation in R session
-
-_`# First check and install dependencies:`_
-
-    list.of.dependencies <- c("doParallel", "lme4", "geepack", "ggplot2", "reshape2")
-    new.packages <- list.of.dependencies[!(list.of.dependencies %in% installed.packages()[,"Package"])]
-    if(length(new.packages)) install.packages(new.packages) else cat("Dependencies are ready!\n")
-    
-_`# Install PGS:`_
-
-    install.packages("PGS_0.2.0.tgz", repo = NULL) # Mac OS X
-    install.packages("PGS_0.2.0.zip", repo = NULL) # Windows
-    install.packages("PGS_0.2.0.tar.gz", repo = NULL) # Linux
+In R console,
+```r
+## Install REMP
+library(devtools)
+install_github("YinanZheng/PGS",
+               dependencies=TRUE)
+               
+## If SSL cert verification failure
+library(RCurl)
+library(httr)
+set_config( config( ssl_verifypeer = 0L ) )
+install_github("YinanZheng/PGS",
+               dependencies=TRUE)
+```
 
 ##Wiki & Examples:
 
