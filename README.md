@@ -1,4 +1,4 @@
-#PGS: Penalized GEE with Grid Search
+## PGS: Penalized GEE with Grid Search
 [![GitHub release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](https://github.com/YinanZheng/PGS/releases)
 
 *PGS* is an [R](http://en.wikipedia.org/wiki/R_%28programming_language%29) package for association study of high-dimensional repeatedly-measured genomic data. 
@@ -21,7 +21,7 @@ install_github("YinanZheng/PGS",
                dependencies=TRUE)
 ```
 
-##Wiki & Examples:
+## Wiki & Examples:
 
 [Wiki: PGS](https://github.com/YinanZheng/PGS/wiki)
 
